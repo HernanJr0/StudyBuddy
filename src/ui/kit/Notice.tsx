@@ -5,7 +5,7 @@ import { cx } from "./util";
 export type Tone = "info" | "ok" | "bad" | "warn";
 
 const TONES: Record<Tone, { box: string; icon: IconName; prefix: string }> = {
-  info: { box: "border-line bg-surface text-fg", icon: "info", prefix: "Informação" },
+  info: { box: "border-info bg-info-bg text-info", icon: "info", prefix: "Informação" },
   ok: { box: "border-ok bg-ok-bg text-ok", icon: "check", prefix: "Certo" },
   bad: { box: "border-bad bg-bad-bg text-bad", icon: "x", prefix: "Erro" },
   warn: { box: "border-warn bg-warn-bg text-warn", icon: "alert", prefix: "Atenção" },

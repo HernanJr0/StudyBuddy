@@ -21,6 +21,7 @@ import {
   cx,
   Dialog,
   Field,
+  Icon,
   Notice,
   Progress,
   TextArea,
@@ -194,104 +195,112 @@ export function GenerateFlow() {
 
   return (
     <div ref={rootRef} class="flex flex-col gap-4">
-      <h2 class="text-xl font-bold">{t("genTitle")}</h2>
-      <form class="flex flex-col gap-5" onSubmit={onSubmit} noValidate>
-        <fieldset disabled={running} class="flex min-w-0 flex-col gap-5">
-          <fieldset class="flex min-w-0 flex-col gap-2">
-            <legend class="font-semibold">{t("genSourceLegend")}</legend>
-            <div class="flex flex-col gap-2 sm:flex-row">
-              {(["pdf", "text"] as const).map((m) => (
-                <label
-                  key={m}
-                  class={cx(
-                    "flex min-h-11 flex-1 cursor-pointer items-center gap-3 rounded-lg border-2 px-3 py-2 font-semibold",
-                    mode === m ? "border-primary bg-surface" : "border-line",
-                  )}
-                >
+      <section
+        aria-labelledby="gen-title"
+        class="flex flex-col gap-5 rounded-xl border border-line bg-surface p-6 shadow-md"
+      >
+        <h2 id="gen-title" class="text-xl font-bold">
+          {t("genTitle")}
+        </h2>
+        <form class="flex flex-col gap-5" onSubmit={onSubmit} noValidate>
+          <fieldset disabled={running} class="flex min-w-0 flex-col gap-5">
+            <fieldset class="flex min-w-0 flex-col gap-2">
+              <legend class="font-semibold">{t("genSourceLegend")}</legend>
+              <div class="flex flex-col gap-2 sm:flex-row">
+                {(["pdf", "text"] as const).map((m) => (
+                  <label
+                    key={m}
+                    class={cx(
+                      "flex min-h-11 flex-1 cursor-pointer items-center gap-3 rounded-lg border-2 px-3 py-2 font-semibold",
+                      mode === m ? "border-primary bg-surface" : "border-line",
+                    )}
+                  >
+                    <input
+                      type="radio"
+                      name="fonte"
+                      value={m}
+                      checked={mode === m}
+                      onChange={() => setMode(m)}
+                      class="size-5 accent-primary"
+                    />
+                    {m === "pdf" ? t("genSourcePdf") : t("genSourceText")}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+
+            <div hidden={mode !== "pdf"} class="flex flex-col gap-2">
+              <Field
+                label={t("genFileLabel")}
+                hint={t("genFileHint", {
+                  mb: LIMITS.maxFileBytes / 1024 / 1024,
+                  pages: LIMITS.maxPages,
+                })}
+                error={errors.file}
+              >
+                {(a11y) => (
                   <input
-                    type="radio"
-                    name="fonte"
-                    value={m}
-                    checked={mode === m}
-                    onChange={() => setMode(m)}
-                    class="size-5 accent-primary"
+                    type="file"
+                    accept="application/pdf"
+                    class={cx(CONTROL_CLASS, FILE_CLASS)}
+                    onChange={(e) => {
+                      setFile((e.currentTarget as HTMLInputElement).files?.[0] ?? null);
+                      setErrors((prev) => ({ ...prev, file: undefined }));
+                    }}
+                    {...a11y}
                   />
-                  {m === "pdf" ? t("genSourcePdf") : t("genSourceText")}
-                </label>
-              ))}
-            </div>
-          </fieldset>
-
-          <div hidden={mode !== "pdf"} class="flex flex-col gap-2">
-            <Field
-              label={t("genFileLabel")}
-              hint={t("genFileHint", {
-                mb: LIMITS.maxFileBytes / 1024 / 1024,
-                pages: LIMITS.maxPages,
-              })}
-              error={errors.file}
-            >
-              {(a11y) => (
-                <input
-                  type="file"
-                  accept="application/pdf"
-                  class={cx(CONTROL_CLASS, FILE_CLASS)}
-                  onChange={(e) => {
-                    setFile((e.currentTarget as HTMLInputElement).files?.[0] ?? null);
-                    setErrors((prev) => ({ ...prev, file: undefined }));
-                  }}
-                  {...a11y}
-                />
+                )}
+              </Field>
+              {file && (
+                <p class="text-sm" aria-live="polite">
+                  {t("genFileChosen", { name: file.name, size: formatSize(file.size) })}
+                </p>
               )}
-            </Field>
-            {file && (
-              <p class="text-sm" aria-live="polite">
-                {t("genFileChosen", { name: file.name, size: formatSize(file.size) })}
-              </p>
-            )}
-          </div>
+            </div>
 
-          <div hidden={mode !== "text"}>
-            <TextArea
-              label={t("genTextLabel")}
-              hint={t("genTextHint")}
-              error={errors.text}
-              value={text}
-              rows={8}
-              onInput={(e) => setText(e.currentTarget.value)}
-            />
-          </div>
+            <div hidden={mode !== "text"}>
+              <TextArea
+                label={t("genTextLabel")}
+                hint={t("genTextHint")}
+                error={errors.text}
+                value={text}
+                rows={8}
+                onInput={(e) => setText(e.currentTarget.value)}
+              />
+            </div>
 
-          <div class="grid gap-5 sm:grid-cols-2">
-            <TextInput
-              label={t("genCardsLabel")}
-              type="number"
-              inputMode="numeric"
-              min={LIMITS.flashcards.min}
-              max={LIMITS.flashcards.max}
-              hint={t("genCountHint", { ...LIMITS.flashcards })}
-              error={errors.cards}
-              value={cards}
-              onInput={(e) => setCards(e.currentTarget.value)}
-            />
-            <TextInput
-              label={t("genQuestionsLabel")}
-              type="number"
-              inputMode="numeric"
-              min={LIMITS.questions.min}
-              max={LIMITS.questions.max}
-              hint={t("genCountHint", { ...LIMITS.questions })}
-              error={errors.questions}
-              value={questions}
-              onInput={(e) => setQuestions(e.currentTarget.value)}
-            />
-          </div>
+            <div class="grid gap-5 sm:grid-cols-2">
+              <TextInput
+                label={t("genCardsLabel")}
+                type="number"
+                inputMode="numeric"
+                min={LIMITS.flashcards.min}
+                max={LIMITS.flashcards.max}
+                hint={t("genCountHint", { ...LIMITS.flashcards })}
+                error={errors.cards}
+                value={cards}
+                onInput={(e) => setCards(e.currentTarget.value)}
+              />
+              <TextInput
+                label={t("genQuestionsLabel")}
+                type="number"
+                inputMode="numeric"
+                min={LIMITS.questions.min}
+                max={LIMITS.questions.max}
+                hint={t("genCountHint", { ...LIMITS.questions })}
+                error={errors.questions}
+                value={questions}
+                onInput={(e) => setQuestions(e.currentTarget.value)}
+              />
+            </div>
 
-          <Button type="submit" variant="primary" block>
-            {t("genSubmit")}
-          </Button>
-        </fieldset>
-      </form>
+            <Button type="submit" variant="primary" block>
+              {t("genSubmit")}
+              <Icon name="forward" />
+            </Button>
+          </fieldset>
+        </form>
+      </section>
 
       {running && (
         <div class="flex flex-col gap-3">

@@ -16,17 +16,17 @@ const SCALE_LABELS: Record<number, Parameters<typeof t>[0]> = {
   1.3: "setFont13",
 };
 
-/** Tema e tamanho do texto: aplicam na hora e ficam salvos. */
+/**
+ * Tema e tamanho do texto: aplicam na hora e ficam salvos. O título da
+ * seção fica a cargo de quem a envolve (veja `Disclosure` em SettingsPage).
+ */
 export function AppearanceSection() {
   const initial = store.getSettings();
   const [theme, setTheme] = useState<ThemeChoice>(initial.theme);
   const [scale, setScale] = useState(initial.fontScale);
 
   return (
-    <section class="flex flex-col gap-4" aria-labelledby="cfg-aparencia">
-      <h2 id="cfg-aparencia" class="text-xl font-bold">
-        {t("setAppearanceTitle")}
-      </h2>
+    <>
       <Select
         label={t("setThemeLabel")}
         value={theme}
@@ -59,6 +59,6 @@ export function AppearanceSection() {
           </option>
         ))}
       </Select>
-    </section>
+    </>
   );
 }

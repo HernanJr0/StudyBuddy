@@ -34,8 +34,14 @@ export function ImportPack() {
   }
 
   return (
-    <div class="flex flex-col gap-1">
-      <Field label={t("importLabel")} hint={t("importHint")} error={error}>
+    <section
+      aria-labelledby="import-title"
+      class="flex flex-col gap-5 rounded-xl border border-line bg-surface p-6 shadow-md"
+    >
+      <h2 id="import-title" class="text-xl font-bold">
+        {t("importLabel")}
+      </h2>
+      <Field label={t("importFileLabel")} hint={t("importHint")} error={error}>
         {(a11y) => (
           <input
             type="file"
@@ -52,6 +58,6 @@ export function ImportPack() {
           {t("importBusy")}
         </p>
       )}
-    </div>
+    </section>
   );
 }

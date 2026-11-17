@@ -9,6 +9,21 @@ export const t = defineMessages({
   navHome: "Início",
   navHistory: "Histórico",
   navSettings: "Configurações",
+
+  /* Barra lateral (histórico) */
+  sideCreate: "Criar",
+  sideSearchLabel: "Buscar no histórico",
+  sideSearchPlaceholder: "Buscar…",
+  sideFilterAll: "Todos",
+  sideFilterGenerated: "Criados",
+  sideFilterImported: "Importados",
+  sideCollapse: "Minimizar histórico",
+  sideExpand: "Expandir histórico",
+  sideOpenMobile: "Abrir histórico",
+  sideEmpty: "Nenhum pacote encontrado.",
+  sideCount: "{n} pacotes",
+  sideCount1: "1 pacote",
+  sideFilterGroup: "Filtrar por origem",
   footerGuide: "Uso responsável",
   footerPrivacy: "Privacidade",
   footerAbout: "Sobre",
@@ -33,7 +48,7 @@ export const t = defineMessages({
   goHome: "Ir para o início",
 
   /* Início */
-  homeTitle: "Estude com perguntas, não só relendo",
+  homeTitle: "Seu PDF de estudo vira resumo, flashcards e quiz em segundos",
   homeIntro:
     "O StudyBuddy transforma o seu material (um PDF ou um texto) em resumo, flashcards e questões de múltipla escolha. Tudo roda no seu navegador, sem cadastro.",
   homeNoProviderTitle: "Falta configurar a inteligência artificial",
@@ -46,11 +61,12 @@ export const t = defineMessages({
 
   /* Abrir pacote recebido */
   importLabel: "Abrir um pacote recebido",
+  importFileLabel: "Arquivo (.json)",
   importHint: "Escolha o arquivo .json que você recebeu. Ele será salvo neste aparelho.",
   importBusy: "Abrindo o pacote…",
 
   /* Formulário de geração */
-  genTitle: "Gerar um pacote de estudo",
+  genTitle: "Gerar pacote de estudo",
   genSourceLegend: "Como quer enviar o material?",
   genSourcePdf: "Enviar PDF",
   genSourceText: "Colar texto",

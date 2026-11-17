@@ -9,7 +9,7 @@ import {
 } from "../../core";
 import { llm } from "../../llm";
 import { store } from "../../store";
-import { Button, Dialog, Notice, Select, TextInput, type Tone } from "../kit";
+import { Button, Dialog, Disclosure, Notice, Select, TextInput, type Tone } from "../kit";
 import { AppearanceSection } from "./AppearanceSection";
 import { DataSection } from "./DataSection";
 import { ExternalLink } from "./ExternalLink";
@@ -163,15 +163,11 @@ export function SettingsPage() {
   }
 
   return (
-    <div ref={rootRef} class="flex flex-col gap-8">
+    <div ref={rootRef} class="flex flex-col gap-6">
       <h1 class="text-2xl font-bold">{t("setTitle")}</h1>
 
-      <form class="flex flex-col gap-8" onSubmit={save} noValidate>
-        <section class="flex flex-col gap-4" aria-labelledby="cfg-provedor">
-          <h2 id="cfg-provedor" class="text-xl font-bold">
-            {t("setProviderTitle")}
-          </h2>
-
+      <form class="flex flex-col gap-4" onSubmit={save} noValidate>
+        <Disclosure id="cfg-provedor" title={t("setProviderTitle")}>
           <Select
             label={t("setProviderLabel")}
             value={provider}
@@ -250,13 +246,9 @@ export function SettingsPage() {
               <span class="block text-sm text-muted">{t("setRememberHint")}</span>
             </span>
           </label>
-        </section>
+        </Disclosure>
 
-        <section class="flex flex-col gap-4" aria-labelledby="cfg-modelo">
-          <h2 id="cfg-modelo" class="text-xl font-bold">
-            {t("setModelTitle")}
-          </h2>
-
+        <Disclosure id="cfg-modelo" title={t("setModelTitle")}>
           <div>
             <Button onClick={fetchModels} disabled={busy !== null}>
               {busy === "models" ? t("setBusyModels") : t("setFetchModels")}
@@ -295,10 +287,14 @@ export function SettingsPage() {
               {busy === "test" ? t("setBusyTest") : t("setTestConnection")}
             </Button>
           </div>
-        </section>
+        </Disclosure>
+
+        <Disclosure id="cfg-aparencia" title={t("setAppearanceTitle")}>
+          <AppearanceSection />
+        </Disclosure>
 
         <div class="flex flex-col gap-3">
-          <div class="flex flex-wrap gap-2">
+          <div class="flex flex-wrap items-center justify-between gap-2">
             <Button type="submit" variant="primary">
               {t("setSave")}
             </Button>
@@ -314,9 +310,9 @@ export function SettingsPage() {
         </div>
       </form>
 
-      <AppearanceSection />
-
-      <DataSection />
+      <Disclosure id="cfg-dados" title={t("setDataTitle")} locked>
+        <DataSection />
+      </Disclosure>
 
       <Dialog
         open={confirmKey}
