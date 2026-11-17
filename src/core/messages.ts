@@ -26,6 +26,8 @@ const errorMessages: Record<ErrorCode, string> = {
   "llm/invalid-response":
     "O modelo devolveu uma resposta fora do formato esperado. Tente de novo ou escolha outro modelo.",
   "llm/cancelled": "Geração cancelada.",
+  "llm/no-vision":
+    "O modelo escolhido não lê imagens. Para PDFs escaneados, escolha um modelo com visão (por exemplo, da família Gemini, GPT ou Claude).",
   "llm/unknown": "Algo deu errado ao gerar o pacote. Tente de novo.",
   "share/invalid": "Este arquivo ou link não é um pacote do StudyBuddy válido.",
   "share/too-new":

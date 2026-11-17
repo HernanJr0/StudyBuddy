@@ -27,6 +27,7 @@ export const t = defineMessages({
   footerGuide: "Uso responsável",
   footerPrivacy: "Privacidade",
   footerAbout: "Sobre",
+  titleReview: "Revisar hoje",
   footerNotice:
     "O StudyBuddy é um projeto de extensão de código aberto. Não é um serviço comercial.",
 

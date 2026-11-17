@@ -12,6 +12,7 @@ export type Route =
   | { name: "aiGuide" }
   | { name: "privacy" }
   | { name: "about" }
+  | { name: "review" }
   | { name: "notFound" };
 
 const TABS: readonly string[] = ["resumo", "flashcards", "quiz"];
@@ -46,6 +47,8 @@ export function parseRoute(hash: string): Route {
       return { name: "privacy" };
     case "#/sobre":
       return { name: "about" };
+    case "#/revisar":
+      return { name: "review" };
   }
   const pack = path.match(/^#\/pacote\/([^/]+)(?:\/([^/]+))?$/);
   if (pack?.[1]) {

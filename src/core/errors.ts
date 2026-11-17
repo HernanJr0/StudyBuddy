@@ -18,6 +18,7 @@ export type ErrorCode =
   | "llm/model-not-found"
   | "llm/invalid-response"
   | "llm/cancelled"
+  | "llm/no-vision"
   | "llm/unknown"
   | "share/invalid"
   | "share/too-new"

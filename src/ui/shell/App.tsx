@@ -3,6 +3,7 @@
  * (PackScreen) vêm de ui/study; o restante fica em ui/shell.
  */
 import { Showcase } from "../kit/Showcase";
+import { ReviewPage } from "../review";
 import { PackScreen } from "../study";
 import { HistoryPage } from "./HistoryPage";
 import { HomePage } from "./HomePage";
@@ -34,6 +35,8 @@ function Page({ route }: { route: Route }) {
       return <PrivacyPage />;
     case "about":
       return <AboutPage />;
+    case "review":
+      return <ReviewPage />;
     case "notFound":
       return <NotFoundPage />;
   }

@@ -28,6 +28,8 @@ function routeTitle(route: Route): string {
       return t("titlePrivacy");
     case "about":
       return t("titleAbout");
+    case "review":
+      return t("titleReview");
     case "notFound":
       return t("titleNotFound");
   }

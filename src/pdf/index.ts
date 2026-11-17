@@ -111,6 +111,11 @@ export const pdf: PdfModule = {
     };
   },
 
+  // PROVISÓRIO (frente I2 implementa com renderização por página):
+  async renderPages() {
+    throw new AppError("pdf/no-text");
+  },
+
   fromText(text): ExtractedDoc {
     const clean = normalizeText(text);
     if (clean.length < MIN_TEXT) throw new AppError("pdf/empty-text");

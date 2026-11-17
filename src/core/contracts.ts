@@ -6,7 +6,7 @@
  * Congelado depois da Etapa 0: só o integrador altera este arquivo.
  */
 import type { ProviderConfig, ProviderId } from "./providers";
-import type { Attempt, CardMark, PackOrigin, PackSummary, StudyPack } from "./schema";
+import type { Attempt, CardMark, PackOrigin, PackSummary, ReviewState, StudyPack } from "./schema";
 
 /* ---------- pdf ---------- */
 
@@ -16,11 +16,25 @@ export interface ExtractedPage {
   text: string;
 }
 
+/** Página de PDF renderizada como imagem (para PDFs escaneados). */
+export interface PageImage {
+  page: number;
+  mime: "image/jpeg" | "image/png";
+  /** Conteúdo em base64, sem o prefixo "data:". */
+  base64: string;
+}
+
 export interface ExtractedDoc {
   pages: ExtractedPage[];
   pageCount: number;
   charCount: number;
   fileName?: string;
+  /**
+   * Presente quando o material veio de um PDF escaneado: as páginas vão como
+   * imagem para um modelo que entende imagens. Nesse caso `pages` pode ter
+   * texto vazio e a verificação de origem não se aplica.
+   */
+  images?: PageImage[];
 }
 
 export interface PdfModule {
@@ -39,6 +53,15 @@ export interface PdfModule {
    * Lança AppError pdf/empty-text.
    */
   fromText(text: string): ExtractedDoc;
+  /**
+   * Renderiza as páginas de um PDF como imagem (JPEG, largura limitada),
+   * para PDFs escaneados. Mesmos limites de tamanho e páginas de extractPdf.
+   * Devolve um ExtractedDoc com `images` preenchido e `pages` com texto vazio.
+   */
+  renderPages(
+    file: Blob & { name?: string },
+    options?: { signal?: AbortSignal },
+  ): Promise<ExtractedDoc>;
 }
 
 /* ---------- llm ---------- */
@@ -130,6 +153,12 @@ export interface StoreModule {
   saveCardMark(mark: CardMark): Promise<void>;
   listCardMarks(packId: string): Promise<CardMark[]>;
 
+  /* Revisão espaçada (FSRS). Apagados junto com o pacote e em clearAll. */
+  listReviewStates(packId: string): Promise<ReviewState[]>;
+  saveReviewState(state: ReviewState): Promise<void>;
+  /** Estados de todos os pacotes com `due` até `now`, do mais atrasado para o mais recente. */
+  listDueReviews(now: Date): Promise<ReviewState[]>;
+
   /* Configurações e chave. Síncronos: usados na inicialização. */
   getSettings(): Settings;
   saveSettings(patch: Partial<Settings>): Settings;
@@ -168,4 +197,6 @@ export const ROUTES = {
   aiGuide: "#/uso-responsavel",
   privacy: "#/privacidade",
   about: "#/sobre",
+  /** Revisão espaçada: flashcards de todos os pacotes que vencem hoje. */
+  review: "#/revisar",
 } as const;

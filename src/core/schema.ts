@@ -176,6 +176,19 @@ export const CardMarkSchema = z.object({
 });
 export type CardMark = z.infer<typeof CardMarkSchema>;
 
+/**
+ * Estado de revisão espaçada (FSRS) de um flashcard. `card` guarda o objeto
+ * do algoritmo serializado (datas em ISO); `due` repete a data da próxima
+ * revisão para permitir consulta por índice.
+ */
+export const ReviewStateSchema = z.object({
+  packId: z.string(),
+  cardId: z.string(),
+  due: z.iso.datetime(),
+  card: z.record(z.string(), z.unknown()),
+});
+export type ReviewState = z.infer<typeof ReviewStateSchema>;
+
 export const PackOriginSchema = z.enum(["generated", "imported"]);
 export type PackOrigin = z.infer<typeof PackOriginSchema>;
 
