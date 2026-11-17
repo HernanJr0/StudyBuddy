@@ -19,7 +19,8 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "size": "node scripts/check-size.mjs",
-    "check": "npm run typecheck && npm run lint && npm run test && npm run build && npm run size"
+    "check": "npm run typecheck && npm run lint && npm run test && npm run build && npm run size",
+    "deploy": "npm run build && wrangler deploy"
   },
   "dependencies": {
     "preact": "^11.2.0",
@@ -39,6 +40,7 @@
     "tailwindcss": "^4.3.5",
     "typescript": "^7.0.2",
     "vite": "^8.3.8",
-    "vitest": "^5.1.0"
+    "vitest": "^5.1.0",
+    "wrangler": "^4.163.0"
   }
 }
