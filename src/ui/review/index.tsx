@@ -6,7 +6,6 @@ import { type DueItem, loadQueue } from "./queue";
 import { recordGrade } from "./record";
 import { GRADES, type GradeKey, previewIntervals } from "./scheduler";
 
-
 export { useDueCount } from "./useDueCount";
 
 function formatWhen(date: Date): string {
