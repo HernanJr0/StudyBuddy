@@ -1,0 +1,21 @@
+{
+  "name": "StudyBuddy",
+  "short_name": "StudyBuddy",
+  "description": "Transforme um PDF de estudo em resumo, flashcards e quiz. Gratuito, sem cadastro, direto no navegador.",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "id": ".",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#2541b2",
+  "background_color": "#fbf9f4",
+  "categories": ["education"],
+  "icons": [
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
