@@ -28,6 +28,12 @@ export const t = defineMessages({
   footerPrivacy: "Privacidade",
   footerAbout: "Sobre",
   titleReview: "Revisar hoje",
+  offlineNotice:
+    "Você está sem internet. Dá para estudar os pacotes salvos neste aparelho, mas não gerar novos.",
+  offlineGenerate: "Sem internet não dá para gerar. Conecte-se e tente de novo.",
+  updateTitle: "Há uma versão nova do StudyBuddy",
+  updateText: "Atualize para usar a versão mais recente. Seus pacotes e notas continuam salvos.",
+  updateButton: "Atualizar agora",
   footerNotice:
     "O StudyBuddy é um projeto de extensão de código aberto. Não é um serviço comercial.",
 

@@ -2,6 +2,7 @@ import type { ComponentChildren } from "preact";
 import { useEffect, useRef } from "preact/hooks";
 import { ROUTES, tCommon } from "../../core";
 import { cx, Icon } from "../kit";
+import { AppNotices } from "./AppNotices";
 import { t } from "./messages";
 import { type Route, routeKey } from "./router";
 import { Sidebar } from "./Sidebar";
@@ -111,6 +112,7 @@ export function Layout({ route, children }: { route: Route; children: ComponentC
             </NavLink>
           </nav>
         </header>
+        <AppNotices />
         <main id="conteudo" ref={mainRef} tabIndex={-1} class="flex-1 py-6 outline-none">
           {children}
         </main>

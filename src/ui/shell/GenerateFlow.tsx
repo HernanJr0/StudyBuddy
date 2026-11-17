@@ -12,6 +12,7 @@ import {
 } from "../../core";
 import { llm } from "../../llm";
 import { pdf } from "../../pdf";
+import { useOnline } from "../../pwa";
 import { store } from "../../store";
 import {
   announce,
@@ -98,6 +99,7 @@ export function GenerateFlow() {
   const [errors, setErrors] = useState<FieldErrors>({});
   const [failure, setFailure] = useState<Failure | null>(null);
   const [running, setRunning] = useState(false);
+  const online = useOnline();
   const [stage, setStage] = useState<GenerationStage>("preparing");
   const [consentFor, setConsentFor] = useState<ProviderInfo | null>(null);
   const abortRef = useRef<AbortController | null>(null);
@@ -138,6 +140,10 @@ export function GenerateFlow() {
     setFailure(null);
     const counts = validate();
     if (!counts) return;
+    if (!online) {
+      setFailure({ code: "llm/network", message: t("offlineGenerate") });
+      return;
+    }
     const config = store.getProviderConfig();
     if (!config) {
       setFailure(toFailure(new AppError("llm/no-config")));
