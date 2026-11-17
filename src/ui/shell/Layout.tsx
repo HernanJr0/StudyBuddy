@@ -86,17 +86,17 @@ export function Layout({ route, children }: { route: Route; children: ComponentC
 
   return (
     <div class="flex min-h-dvh w-full">
+      {/* biome-ignore lint/a11y/useValidAnchor: o salto só move o foco; o hash é das rotas */}
+      <a
+        href="#conteudo"
+        onClick={skip}
+        class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-10 focus:rounded-lg focus:bg-bg focus:p-3"
+      >
+        {t("skipLink")}
+      </a>
       <Sidebar activePackId={activePackId} />
-      <div class="mx-auto flex min-h-dvh w-full max-w-3xl flex-1 flex-col px-4">
-        {/* biome-ignore lint/a11y/useValidAnchor: o salto só move o foco; o hash é das rotas */}
-        <a
-          href="#conteudo"
-          onClick={skip}
-          class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-10 focus:rounded-lg focus:bg-bg focus:p-3"
-        >
-          {t("skipLink")}
-        </a>
-        <header class="flex items-center justify-between gap-2 border-b-2 border-line py-2">
+      <div class="mx-auto flex min-h-dvh w-full min-w-0 max-w-3xl flex-1 flex-col px-4">
+        <header class="flex flex-wrap items-center justify-between gap-2 border-b-2 border-line py-2">
           <a
             href={ROUTES.home}
             class="inline-flex min-h-11 items-center text-xl font-bold text-fg no-underline"

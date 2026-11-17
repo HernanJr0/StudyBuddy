@@ -167,7 +167,7 @@ export function SettingsPage() {
       <h1 class="text-2xl font-bold">{t("setTitle")}</h1>
 
       <form class="flex flex-col gap-4" onSubmit={save} noValidate>
-        <Disclosure id="cfg-provedor" title={t("setProviderTitle")}>
+        <Disclosure id="cfg-provedor" title={t("setProviderTitle")} defaultOpen>
           <Select
             label={t("setProviderLabel")}
             value={provider}
@@ -248,7 +248,7 @@ export function SettingsPage() {
           </label>
         </Disclosure>
 
-        <Disclosure id="cfg-modelo" title={t("setModelTitle")}>
+        <Disclosure id="cfg-modelo" title={t("setModelTitle")} defaultOpen>
           <div>
             <Button onClick={fetchModels} disabled={busy !== null}>
               {busy === "models" ? t("setBusyModels") : t("setFetchModels")}
@@ -289,7 +289,7 @@ export function SettingsPage() {
           </div>
         </Disclosure>
 
-        <Disclosure id="cfg-aparencia" title={t("setAppearanceTitle")}>
+        <Disclosure id="cfg-aparencia" title={t("setAppearanceTitle")} defaultOpen>
           <AppearanceSection />
         </Disclosure>
 

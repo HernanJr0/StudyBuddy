@@ -91,10 +91,13 @@ test("PDF real vira pacote, fica no histórico e abre por link em outro aparelho
     page.getByRole("heading", { level: 1, name: "Pacote do teste integrado" }),
   ).toBeVisible();
   await page.goto("/#/historico");
-  await expect(page.getByRole("link", { name: "Pacote do teste integrado" })).toBeVisible();
+  const historyLink = page
+    .getByRole("main")
+    .getByRole("link", { name: "Pacote do teste integrado" });
+  await expect(historyLink).toBeVisible();
 
   // Compartilha por link.
-  await page.getByRole("link", { name: "Pacote do teste integrado" }).click();
+  await historyLink.click();
   await page.getByRole("button", { name: "Copiar link" }).click();
   await expect(page.getByText("Link copiado.").first()).toBeVisible();
   const link = await page.evaluate(() => navigator.clipboard.readText());

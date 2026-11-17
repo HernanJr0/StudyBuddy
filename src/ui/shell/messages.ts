@@ -61,7 +61,6 @@ export const t = defineMessages({
 
   /* Abrir pacote recebido */
   importLabel: "Abrir um pacote recebido",
-  importFileLabel: "Arquivo (.json)",
   importHint: "Escolha o arquivo .json que você recebeu. Ele será salvo neste aparelho.",
   importBusy: "Abrindo o pacote…",
 

@@ -8,7 +8,7 @@ export function ExternalLink({ href, children }: { href: string; children: Compo
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      class="inline-flex min-h-11 items-center gap-1"
+      class="inline-flex min-h-11 flex-wrap items-center gap-1 break-all"
     >
       <span>{children}</span>
       <span class="text-sm text-muted">{t("setNewTab")}</span>

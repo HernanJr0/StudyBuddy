@@ -154,17 +154,12 @@ test("o salto para o conteúdo e a navegação movem o foco para o main", async 
   await expect(page.locator("main")).toBeFocused();
 
   const nav = page.getByRole("navigation", { name: "Principal" });
-  await expect(nav.getByRole("link", { name: "Início" })).toHaveAttribute("aria-current", "page");
-  await nav.getByRole("link", { name: "Histórico" }).focus();
+  await nav.getByRole("link", { name: "Configurações" }).focus();
   await page.keyboard.press("Enter");
-  await expect(page.getByRole("heading", { level: 1, name: "Histórico" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "Configurações" })).toBeVisible();
   await expect(page.locator("main")).toBeFocused();
-  await expect(page).toHaveTitle("Histórico · StudyBuddy");
-  await expect(nav.getByRole("link", { name: "Histórico" })).toHaveAttribute(
-    "aria-current",
-    "page",
-  );
-  await expect(nav.getByRole("link", { name: "Início" })).not.toHaveAttribute(
+  await expect(page).toHaveTitle("Configurações · StudyBuddy");
+  await expect(nav.getByRole("link", { name: "Configurações" })).toHaveAttribute(
     "aria-current",
     "page",
   );
@@ -348,12 +343,12 @@ test("histórico lista, abre e exclui pacotes", async ({ page }) => {
 
   await open(page, "#/exemplo");
   await expect(page).toHaveURL(/#\/pacote\//);
-  await page
-    .getByRole("navigation", { name: "Principal" })
-    .getByRole("link", { name: "Histórico" })
-    .click();
+  await open(page, "#/historico");
 
-  const item = page.getByRole("listitem").filter({ hasText: EXAMPLE_TITLE });
+  const item = page
+    .getByRole("main")
+    .getByRole("listitem")
+    .filter({ hasText: EXAMPLE_TITLE });
   await expect(item).toBeVisible();
   await expect(item).toContainText("Recebido");
   await expect(item).toContainText(/\d+ cartões/);
@@ -394,7 +389,9 @@ test("rota desconhecida mostra a página não encontrada", async ({ page }) => {
   await expect(page).toHaveTitle("Página não encontrada · StudyBuddy");
   await page.getByRole("link", { name: "Ir para o início" }).click();
   await expect(page).toHaveURL(/#\/$/);
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Estude com perguntas/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+    /Seu PDF de estudo vira resumo/,
+  );
 });
 
 test("rodapé leva às páginas de texto", async ({ page }) => {
@@ -446,7 +443,7 @@ test.describe("320 px", () => {
     expect(overflow).toBe(false);
 
     const links = page.getByRole("navigation", { name: "Principal" }).getByRole("link");
-    await expect(links).toHaveCount(3);
+    await expect(links).toHaveCount(1);
     for (const link of await links.all()) {
       const box = await link.boundingBox();
       expect(box?.height ?? 0).toBeGreaterThanOrEqual(44);

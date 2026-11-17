@@ -7,13 +7,19 @@ import { t } from "./messages";
 type Filter = "all" | "generated" | "imported";
 
 const COLLAPSE_KEY = "studybuddy.sidebarCollapsed";
+/** Larguras menores que esta (o breakpoint `sm` do Tailwind) usam a gaveta sobreposta. */
+const NARROW_VIEWPORT = 640;
 
 function readCollapsed(): boolean {
   try {
-    return localStorage.getItem(COLLAPSE_KEY) === "1";
+    const stored = localStorage.getItem(COLLAPSE_KEY);
+    if (stored !== null) return stored === "1";
   } catch {
-    return false;
+    // Sem armazenamento disponível: segue para o padrão por tamanho de tela.
   }
+  // Sem preferência salva: em telas estreitas, começa recolhida (só ícones) para
+  // não abrir como uma gaveta cobrindo o conteúdo.
+  return typeof window !== "undefined" && window.innerWidth < NARROW_VIEWPORT;
 }
 
 function writeCollapsed(value: boolean): void {
