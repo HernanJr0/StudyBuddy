@@ -2,7 +2,7 @@
  * Módulo store: pacotes e progresso no IndexedDB, configurações e chaves no
  * armazenamento do navegador, compartilhamento por arquivo e link, CSV do Anki.
  */
-import type { ReviewState, StoreModule } from "../core";
+import type { StoreModule } from "../core";
 import { flashcardsToAnkiCsv } from "./anki";
 import {
   addAttempt,
@@ -16,6 +16,7 @@ import {
   savePack,
   updatePack,
 } from "./packs";
+import { listDueReviews, listReviewStates, saveReviewState } from "./review";
 import {
   clearApiKeys,
   getApiKey,
@@ -37,14 +38,9 @@ export const store: StoreModule = {
   listAttempts,
   saveCardMark,
   listCardMarks,
-  // PROVISÓRIO (frente F substitui por IndexedDB):
-  async listReviewStates(): Promise<ReviewState[]> {
-    return [];
-  },
-  async saveReviewState() {},
-  async listDueReviews(): Promise<ReviewState[]> {
-    return [];
-  },
+  listReviewStates,
+  saveReviewState,
+  listDueReviews,
   getSettings,
   saveSettings,
   getApiKey,

@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "preact/hooks";
 import { type Flashcard, type StudyPack, tCommon } from "../../core";
 import { store } from "../../store";
 import { announce, Button, Notice } from "../kit";
+import { recordGrade } from "../review/record";
+import { gradeForMark } from "../review/scheduler";
 import { CardEditDialog, ConfirmRemoveDialog } from "./CurateDialog";
 import { t } from "./messages";
 
@@ -99,6 +101,8 @@ export function FlashcardsView({ pack, commit }: Props) {
         known,
         at: new Date().toISOString(),
       });
+      // Também agenda a próxima revisão (Errei = Again, Acertei = Good).
+      await recordGrade(pack.id, current.id, gradeForMark(known));
     } catch {
       setMarkFailed(true);
     }

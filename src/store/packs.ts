@@ -94,9 +94,9 @@ export async function updatePack(pack: StudyPack): Promise<void> {
 }
 
 export async function deletePack(id: string): Promise<void> {
-  await withTx(["packs", "attempts", "marks"], "readwrite", async (tx) => {
+  await withTx(["packs", "attempts", "marks", "reviews"], "readwrite", async (tx) => {
     await req(tx.objectStore("packs").delete(id));
-    for (const name of ["attempts", "marks"] as const) {
+    for (const name of ["attempts", "marks", "reviews"] as const) {
       const store = tx.objectStore(name);
       const keys = await req(store.index("packId").getAllKeys(id));
       for (const key of keys) await req(store.delete(key));
@@ -106,10 +106,11 @@ export async function deletePack(id: string): Promise<void> {
 }
 
 export async function clearAll(): Promise<void> {
-  await withTx(["packs", "attempts", "marks"], "readwrite", async (tx) => {
+  await withTx(["packs", "attempts", "marks", "reviews"], "readwrite", async (tx) => {
     await req(tx.objectStore("packs").clear());
     await req(tx.objectStore("attempts").clear());
     await req(tx.objectStore("marks").clear());
+    await req(tx.objectStore("reviews").clear());
   });
   notifyPacksChanged();
 }

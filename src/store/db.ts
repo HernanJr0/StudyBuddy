@@ -1,13 +1,13 @@
 /**
- * Conexão com o IndexedDB nativo. Banco "studybuddy", versão 1.
+ * Conexão com o IndexedDB nativo. Banco "studybuddy", versão 2 (a 2 acrescenta "reviews").
  * Qualquer falha vira AppError("store/unavailable").
  */
 import { AppError } from "../core";
 
 export const DB_NAME = "studybuddy";
-export const DB_VERSION = 1;
+export const DB_VERSION = 2;
 
-export type StoreName = "packs" | "attempts" | "marks";
+export type StoreName = "packs" | "attempts" | "marks" | "reviews";
 
 let connection: Promise<IDBDatabase> | null = null;
 
@@ -37,6 +37,12 @@ function open(): Promise<IDBDatabase> {
       if (!db.objectStoreNames.contains("marks")) {
         const marks = db.createObjectStore("marks", { keyPath: ["packId", "cardId"] });
         marks.createIndex("packId", "packId");
+      }
+      // Versão 2: estados da revisão espaçada. Os dados da versão 1 ficam como estão.
+      if (!db.objectStoreNames.contains("reviews")) {
+        const reviews = db.createObjectStore("reviews", { keyPath: ["packId", "cardId"] });
+        reviews.createIndex("packId", "packId");
+        reviews.createIndex("due", "due");
       }
     };
     request.onsuccess = () => {
