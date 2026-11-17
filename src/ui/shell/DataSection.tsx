@@ -4,7 +4,12 @@ import { store } from "../../store";
 import { Button, Dialog, Notice, type Tone } from "../kit";
 import { t } from "./messages";
 
-/** Apagar todos os pacotes, tentativas e marcações deste aparelho. */
+/**
+ * Apagar todos os pacotes, tentativas e marcações deste aparelho. O título
+ * da seção fica a cargo de quem a envolve (veja `Disclosure` em
+ * SettingsPage): esta é a única seção de Configurações que não pode ser
+ * minimizada.
+ */
 export function DataSection() {
   const [confirm, setConfirm] = useState(false);
   const [result, setResult] = useState<{ tone: Tone; text: string } | null>(null);
@@ -20,13 +25,10 @@ export function DataSection() {
   }
 
   return (
-    <section class="flex flex-col gap-4" aria-labelledby="cfg-dados">
-      <h2 id="cfg-dados" class="text-xl font-bold">
-        {t("setDataTitle")}
-      </h2>
+    <>
       <p>{t("setDataText")}</p>
       <div>
-        <Button variant="danger" icon="trash" onClick={() => setConfirm(true)}>
+        <Button variant="danger" icon="trash" class="px-3 text-sm" onClick={() => setConfirm(true)}>
           {t("setClearAll")}
         </Button>
       </div>
@@ -50,6 +52,6 @@ export function DataSection() {
       >
         <p>{t("setClearAllText")}</p>
       </Dialog>
-    </section>
+    </>
   );
 }

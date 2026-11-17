@@ -12,6 +12,15 @@ import {
 } from "../core";
 import { req, withTx } from "./db";
 
+/** Avisa a interface (ex.: barra lateral) que a lista de pacotes mudou. */
+function notifyPacksChanged(): void {
+  try {
+    window.dispatchEvent(new Event("studybuddy:packs-changed"));
+  } catch {
+    // Sem `window` (ex.: testes em Node): nada a notificar.
+  }
+}
+
 interface Row {
   pack: StudyPack;
   origin: PackOrigin;
@@ -71,6 +80,7 @@ export async function savePack(pack: StudyPack, origin: PackOrigin): Promise<voi
   await withTx(["packs"], "readwrite", async (tx) => {
     await req(tx.objectStore("packs").put(row));
   });
+  notifyPacksChanged();
 }
 
 export async function updatePack(pack: StudyPack): Promise<void> {
@@ -80,6 +90,7 @@ export async function updatePack(pack: StudyPack): Promise<void> {
     const row = (await req(store.get(next.id))) as Row | undefined;
     if (row) await req(store.put({ ...row, pack: next }));
   });
+  notifyPacksChanged();
 }
 
 export async function deletePack(id: string): Promise<void> {
@@ -91,6 +102,7 @@ export async function deletePack(id: string): Promise<void> {
       for (const key of keys) await req(store.delete(key));
     }
   });
+  notifyPacksChanged();
 }
 
 export async function clearAll(): Promise<void> {
@@ -99,6 +111,7 @@ export async function clearAll(): Promise<void> {
     await req(tx.objectStore("attempts").clear());
     await req(tx.objectStore("marks").clear());
   });
+  notifyPacksChanged();
 }
 
 export async function addAttempt(attempt: Attempt): Promise<void> {

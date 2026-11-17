@@ -2,7 +2,7 @@ import type { ComponentChildren, JSX } from "preact";
 import { Icon, type IconName } from "./Icon";
 import { cx } from "./util";
 
-export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
+export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger" | "iconDanger";
 
 const BASE =
   "inline-flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-lg px-4 py-2 text-base font-semibold no-underline select-none disabled:cursor-not-allowed disabled:opacity-60 aria-disabled:cursor-not-allowed aria-disabled:opacity-60";
@@ -12,6 +12,7 @@ const VARIANTS: Record<ButtonVariant, string> = {
   secondary: "border-2 border-line bg-bg text-fg hover:bg-surface",
   ghost: "text-primary hover:bg-surface",
   danger: "border-2 border-bad bg-bg text-bad hover:bg-bad-bg",
+  iconDanger: "text-muted hover:text-bad",
 };
 
 interface Common {

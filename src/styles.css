@@ -1,62 +1,76 @@
 @import "tailwindcss";
 
 /*
- * Tokens de cor. Todos os pares texto/fundo abaixo têm contraste de pelo
- * menos 4,5:1 (WCAG 2.2 AA); bordas e foco, pelo menos 3:1.
- * Ao mudar um valor, confira o contraste de novo.
+ * Tokens de cor (paleta do novo design: fundo creme, azul índigo como cor
+ * primária, laranja coral como destaque). Todos os pares texto/fundo abaixo
+ * têm contraste de pelo menos 4,5:1 (WCAG 2.2 AA); bordas e foco, pelo menos
+ * 3:1. `line` e `warn` foram ajustados a partir da referência visual para
+ * manter esse contraste. Ao mudar um valor, confira o contraste de novo.
  */
 :root {
   color-scheme: light;
-  --sb-bg: #ffffff;
-  --sb-surface: #f3f5f8;
-  --sb-fg: #14181f;
-  --sb-muted: #4a5361;
-  --sb-primary: #1d4ed8;
+  --sb-bg: #fbf9f4;
+  --sb-surface: #ffffff;
+  --sb-fg: #1c2333;
+  --sb-muted: #5b6475;
+  --sb-primary: #2541b2;
   --sb-on-primary: #ffffff;
-  --sb-ok: #166534;
+  --sb-accent: #f2613f;
+  --sb-accent-bg: #fde9e3;
+  --sb-info: #1d4ed8;
+  --sb-info-bg: #dbeafe;
+  --sb-ok: #15803d;
   --sb-ok-bg: #dcfce7;
   --sb-bad: #b91c1c;
   --sb-bad-bg: #fee2e2;
-  --sb-warn: #713f12;
-  --sb-warn-bg: #fef3c7;
-  --sb-line: #6b7280;
+  --sb-warn: #9a3412;
+  --sb-warn-bg: #fde9e3;
+  --sb-line: #8f8674;
   --sb-font-scale: 1;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --sb-bg: #0f1218;
-    --sb-surface: #1a202b;
-    --sb-fg: #f1f5f9;
-    --sb-muted: #b4bfce;
-    --sb-primary: #93c5fd;
-    --sb-on-primary: #0b1220;
-    --sb-ok: #86efac;
-    --sb-ok-bg: #0f2e1c;
-    --sb-bad: #fca5a5;
-    --sb-bad-bg: #3b1414;
-    --sb-warn: #fde68a;
-    --sb-warn-bg: #3a2c07;
-    --sb-line: #8b95a5;
+    --sb-bg: #12151c;
+    --sb-surface: #1a1f29;
+    --sb-fg: #f1f0ea;
+    --sb-muted: #a7aebb;
+    --sb-primary: #9db2ff;
+    --sb-on-primary: #10131b;
+    --sb-accent: #ff9270;
+    --sb-accent-bg: #3a2420;
+    --sb-info: #8fb4ff;
+    --sb-info-bg: #152a4a;
+    --sb-ok: #6fe39b;
+    --sb-ok-bg: #163424;
+    --sb-bad: #ff9b9b;
+    --sb-bad-bg: #3a1616;
+    --sb-warn: #ff9270;
+    --sb-warn-bg: #3a2420;
+    --sb-line: #5e6b80;
   }
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --sb-bg: #0f1218;
-  --sb-surface: #1a202b;
-  --sb-fg: #f1f5f9;
-  --sb-muted: #b4bfce;
-  --sb-primary: #93c5fd;
-  --sb-on-primary: #0b1220;
-  --sb-ok: #86efac;
-  --sb-ok-bg: #0f2e1c;
-  --sb-bad: #fca5a5;
-  --sb-bad-bg: #3b1414;
-  --sb-warn: #fde68a;
-  --sb-warn-bg: #3a2c07;
-  --sb-line: #8b95a5;
+  --sb-bg: #12151c;
+  --sb-surface: #1a1f29;
+  --sb-fg: #f1f0ea;
+  --sb-muted: #a7aebb;
+  --sb-primary: #9db2ff;
+  --sb-on-primary: #10131b;
+  --sb-accent: #ff9270;
+  --sb-accent-bg: #3a2420;
+  --sb-info: #8fb4ff;
+  --sb-info-bg: #152a4a;
+  --sb-ok: #6fe39b;
+  --sb-ok-bg: #163424;
+  --sb-bad: #ff9b9b;
+  --sb-bad-bg: #3a1616;
+  --sb-warn: #ff9270;
+  --sb-warn-bg: #3a2420;
+  --sb-line: #5e6b80;
 }
 
 @theme inline {
@@ -66,6 +80,10 @@
   --color-muted: var(--sb-muted);
   --color-primary: var(--sb-primary);
   --color-on-primary: var(--sb-on-primary);
+  --color-accent: var(--sb-accent);
+  --color-accent-bg: var(--sb-accent-bg);
+  --color-info: var(--sb-info);
+  --color-info-bg: var(--sb-info-bg);
   --color-ok: var(--sb-ok);
   --color-ok-bg: var(--sb-ok-bg);
   --color-bad: var(--sb-bad);

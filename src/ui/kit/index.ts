@@ -1,5 +1,6 @@
 export { Button, ButtonLink, type ButtonVariant } from "./Button";
 export { Dialog } from "./Dialog";
+export { Disclosure } from "./Disclosure";
 export { CONTROL_CLASS, type ControlA11y, Field, Select, TextArea, TextInput } from "./Field";
 export { Icon, type IconName } from "./Icon";
 export { Notice, type Tone } from "./Notice";
