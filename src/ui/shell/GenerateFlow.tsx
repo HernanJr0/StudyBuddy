@@ -54,7 +54,12 @@ const STAGE_TEXT: Record<GenerationStage, Parameters<typeof t>[0]> = {
   done: "genStageDone",
 };
 
-const SETTINGS_ERRORS: ErrorCode[] = ["llm/no-config", "llm/invalid-key", "llm/model-not-found"];
+const SETTINGS_ERRORS: ErrorCode[] = [
+  "llm/no-config",
+  "llm/invalid-key",
+  "llm/model-not-found",
+  "llm/no-vision",
+];
 
 const FILE_CLASS =
   "file:mr-3 file:min-h-9 file:rounded-md file:border-0 file:bg-primary file:px-3 file:text-on-primary file:font-semibold";
@@ -96,6 +101,7 @@ export function GenerateFlow() {
   const [stage, setStage] = useState<GenerationStage>("preparing");
   const [consentFor, setConsentFor] = useState<ProviderInfo | null>(null);
   const abortRef = useRef<AbortController | null>(null);
+  const lastCounts = useRef<Counts | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => () => abortRef.current?.abort(), []);
@@ -154,7 +160,8 @@ export function GenerateFlow() {
     void run(counts);
   }
 
-  async function run(counts: Counts) {
+  async function run(counts: Counts, asImages = false) {
+    lastCounts.current = counts;
     const controller = new AbortController();
     const { signal } = controller;
     abortRef.current = controller;
@@ -165,7 +172,11 @@ export function GenerateFlow() {
       const config = store.getProviderConfig();
       if (!config) throw new AppError("llm/no-config");
       const doc =
-        mode === "pdf" && file ? await pdf.extractPdf(file, { signal }) : pdf.fromText(text);
+        mode === "pdf" && file
+          ? asImages
+            ? await pdf.renderPages(file, { signal })
+            : await pdf.extractPdf(file, { signal })
+          : pdf.fromText(text);
       if (signal.aborted) throw new AppError("llm/cancelled");
       const pack = await llm.generateStudyPack(
         doc,
@@ -320,6 +331,22 @@ export function GenerateFlow() {
       {failure && (
         <Notice tone="bad" live title={t("genErrorTitle")}>
           <p>{failure.message}</p>
+          {failure.code === "pdf/no-text" && mode === "pdf" && file && (
+            <div class="mt-3 flex flex-col gap-2">
+              <p>{t("genScanOffer")}</p>
+              <div>
+                <Button
+                  variant="primary"
+                  onClick={() => {
+                    const counts = lastCounts.current ?? validate();
+                    if (counts) void run(counts, true);
+                  }}
+                >
+                  {t("genScanButton")}
+                </Button>
+              </div>
+            </div>
+          )}
           {SETTINGS_ERRORS.includes(failure.code) && (
             <div class="mt-3">
               <ButtonLink href={ROUTES.settings}>{t("genErrorSettingsLink")}</ButtonLink>

@@ -141,3 +141,23 @@ test("o leitor de PDF só é baixado quando um PDF é enviado", async ({ page })
   await expect(page.getByRole("button", { name: "Gerar pacote de estudo" })).toBeVisible();
   expect(scripts.some((u) => /pdfjs|unpdf/.test(u))).toBe(false);
 });
+
+test("PDF escaneado pode ser lido como imagem e gera pacote sem trechos verificados", async ({
+  page,
+}) => {
+  const groq = await mockGroq(page);
+  await configure(page);
+  await submitPdf(page, "escaneado.pdf");
+  await expect(page.getByText(/parece ser uma imagem escaneada/)).toBeVisible();
+  await page.getByRole("button", { name: "Ler as páginas como imagem" }).click();
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Pacote do teste integrado" }),
+  ).toBeVisible({ timeout: 30_000 });
+  expect(groq.bodies).toHaveLength(1);
+  const body = JSON.parse(groq.bodies[0] ?? "{}");
+  const parts = JSON.stringify(body.messages);
+  expect(parts).toContain("data:image/jpeg;base64,");
+  await page.getByRole("tab", { name: "Flashcards" }).click();
+  await page.getByRole("button", { name: "Mostrar resposta" }).click();
+  await expect(page.getByText("Trecho de origem não verificado").first()).toBeVisible();
+});

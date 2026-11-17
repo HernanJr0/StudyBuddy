@@ -93,6 +93,9 @@ export const t = defineMessages({
   genDone: "Pacote gerado.",
   genErrorTitle: "Não foi possível gerar o pacote",
   genErrorSettingsLink: "Abrir Configurações",
+  genScanOffer:
+    "Dá para tentar ler as páginas como imagem. Elas vão inteiras para o provedor, o modelo precisa entender imagens (Gemini, GPT e Claude entendem) e os trechos de origem não poderão ser conferidos.",
+  genScanButton: "Ler as páginas como imagem",
   genManyPages: "muitas",
 
   /* Consentimento */
