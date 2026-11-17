@@ -13,10 +13,10 @@ import {
 } from "../core";
 import { adapterFor } from "./adapters";
 import type { Conn } from "./adapters/types";
-import { verifyContent } from "./grounding";
+import { unverified, verifyContent } from "./grounding";
 import { schemaText } from "./jsonschema";
 import { parseGenerated } from "./parse";
-import { buildSystemPrompt, buildUserPrompt, DEFAULT_LANGUAGE } from "./prompt";
+import { buildSystemPrompt, buildUserPrompt, DEFAULT_LANGUAGE, hasImages } from "./prompt";
 
 /** Valida a configuração e devolve a conexão pronta. */
 export function connFor(config: Omit<ProviderConfig, "model">, signal?: AbortSignal): Conn {
@@ -41,7 +41,8 @@ export async function generateStudyPack(
   const progress = control?.onProgress;
   progress?.("preparing");
   checkAbort(signal);
-  if (doc.charCount > LIMITS.maxChars) throw new AppError("llm/too-long", "material");
+  const images = hasImages(doc);
+  if (!images && doc.charCount > LIMITS.maxChars) throw new AppError("llm/too-long", "material");
   if (!config.model) throw new AppError("llm/no-config", "modelo");
   const conn = connFor(config, signal);
   const adapter = adapterFor(config.provider);
@@ -49,9 +50,10 @@ export async function generateStudyPack(
   const req = {
     ...conn,
     model: config.model,
-    system: buildSystemPrompt({ ...options, language }),
+    system: buildSystemPrompt({ ...options, language }, images),
     user: buildUserPrompt(doc),
     schemaText: schemaText(),
+    ...(images && doc.images ? { images: doc.images } : {}),
   };
 
   let content = null;
@@ -70,7 +72,8 @@ export async function generateStudyPack(
     flashcards: content.flashcards.slice(0, options.flashcards),
     questions: content.questions.slice(0, options.questions),
   };
-  const grounded = verifyContent(content, doc);
+  // Com imagens não há texto para conferir: nada fica verificado.
+  const grounded = images ? unverified(content) : verifyContent(content, doc);
   const pack = buildPack(grounded.content, {
     provider: config.provider,
     model: config.model,

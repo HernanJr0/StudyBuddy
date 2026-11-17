@@ -5,9 +5,10 @@
  * ai.google.dev/gemini-api/docs/structured-output e a referência de generateContent.
  */
 import { AppError, type ModelInfo } from "../../core";
-import { asRecord, fetchJson } from "../http";
+import { asRecord, fetchJson, noVisionOr } from "../http";
 import { schemaFor } from "../jsonschema";
 import { isTextModel, sortModels } from "../models";
+import { pageLabel } from "../prompt";
 import type { Adapter, Conn, GenerateRequest } from "./types";
 
 const BLOCK_FINISH = new Set(["SAFETY", "RECITATION", "PROHIBITED_CONTENT", "BLOCKLIST", "SPII"]);
@@ -77,13 +78,23 @@ export const geminiAdapter: Adapter = {
   },
 
   async generate(req: GenerateRequest) {
-    return call(req, req.model, {
-      systemInstruction: { parts: [{ text: req.system }] },
-      contents: [{ role: "user", parts: [{ text: req.user }] }],
-      generationConfig: {
-        responseMimeType: "application/json",
-        responseJsonSchema: schemaFor("gemini"),
-      },
-    });
+    const images = req.images ?? [];
+    const parts: unknown[] = [{ text: req.user }];
+    for (const img of images) {
+      parts.push({ text: pageLabel(img.page) });
+      parts.push({ inline_data: { mime_type: img.mime, data: img.base64 } });
+    }
+    try {
+      return await call(req, req.model, {
+        systemInstruction: { parts: [{ text: req.system }] },
+        contents: [{ role: "user", parts }],
+        generationConfig: {
+          responseMimeType: "application/json",
+          responseJsonSchema: schemaFor("gemini"),
+        },
+      });
+    } catch (e) {
+      throw images.length ? noVisionOr(e) : e;
+    }
   },
 };

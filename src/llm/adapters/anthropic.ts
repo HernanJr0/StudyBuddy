@@ -7,10 +7,10 @@
  * stop_reason "refusal" -> llm/blocked.
  */
 import { AppError, type ModelInfo } from "../../core";
-import { asRecord, fetchJson, LlmHttpError } from "../http";
+import { asRecord, fetchJson, LlmHttpError, noVisionOr } from "../http";
 import { schemaFor } from "../jsonschema";
 import { sortModels } from "../models";
-import { schemaInstruction } from "../prompt";
+import { pageLabel, schemaInstruction } from "../prompt";
 import type { Adapter, Conn, GenerateRequest } from "./types";
 
 const API_VERSION = "2023-06-01";
@@ -73,11 +73,34 @@ export const anthropicAdapter: Adapter = {
   },
 
   async generate(req: GenerateRequest) {
+    try {
+      return await generateMessages(req);
+    } catch (e) {
+      throw req.images?.length ? noVisionOr(e) : e;
+    }
+  },
+};
+
+function userContent(req: GenerateRequest, extra = ""): string | unknown[] {
+  const text = extra ? `${req.user}\n\n${extra}` : req.user;
+  const images = req.images ?? [];
+  if (!images.length) return text;
+  return [
+    ...images.flatMap((img) => [
+      { type: "text", text: pageLabel(img.page) },
+      { type: "image", source: { type: "base64", media_type: img.mime, data: img.base64 } },
+    ]),
+    { type: "text", text },
+  ];
+}
+
+async function generateMessages(req: GenerateRequest): Promise<string> {
+  {
     const body = (maxTokens: number): Record<string, unknown> => ({
       model: req.model,
       max_tokens: maxTokens,
       system: req.system,
-      messages: [{ role: "user", content: req.user }],
+      messages: [{ role: "user", content: userContent(req) }],
       output_config: { format: { type: "json_schema", schema: schemaFor("anthropic") } },
     });
     try {
@@ -92,7 +115,7 @@ export const anthropicAdapter: Adapter = {
       model: req.model,
       max_tokens: MAX_TOKENS_FALLBACK,
       system: req.system,
-      messages: [{ role: "user", content: `${req.user}\n\n${schemaInstruction(req.schemaText)}` }],
+      messages: [{ role: "user", content: userContent(req, schemaInstruction(req.schemaText)) }],
     });
-  },
-};
+  }
+}

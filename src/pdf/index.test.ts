@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { AppError, LIMITS } from "../core";
-import { pdf } from "./index";
+import { bytesToBase64, type OpenRenderer, pdf, renderPagesWith } from "./index";
 
 const fixture = (name: string) => {
   const buf = readFileSync(join(import.meta.dirname, "fixtures", name));
@@ -98,5 +98,93 @@ describe("fromText", () => {
     const doc = pdf.fromText("a".repeat(250));
     expect(doc.pageCount).toBe(1);
     expect(doc.charCount).toBe(250);
+  });
+});
+
+describe("renderPages (renderizador simulado)", () => {
+  const jpeg = (n: number) => new Uint8Array(n).fill(7);
+  const fake =
+    (pageCount: number, size = 10, onClose?: () => void): OpenRenderer =>
+    async () => ({
+      pageCount,
+      renderJpeg: async () => jpeg(size),
+      close: () => onClose?.(),
+    });
+
+  it("monta o resultado com imagens, páginas vazias e charCount 0", async () => {
+    let closed = false;
+    const doc = await renderPagesWith(
+      fixture("escaneado.pdf"),
+      undefined,
+      fake(3, 10, () => {
+        closed = true;
+      }),
+    );
+    expect(doc.pageCount).toBe(3);
+    expect(doc.charCount).toBe(0);
+    expect(doc.fileName).toBe("escaneado.pdf");
+    expect(doc.pages).toEqual([1, 2, 3].map((page) => ({ page, text: "" })));
+    expect(doc.images?.map((i) => i.page)).toEqual([1, 2, 3]);
+    expect(doc.images?.[0]).toEqual({
+      page: 1,
+      mime: "image/jpeg",
+      base64: bytesToBase64(jpeg(10)),
+    });
+    expect(doc.images?.[0]?.base64).not.toMatch(/^data:/);
+    expect(closed).toBe(true);
+  });
+
+  it("aplica as checagens iniciais", async () => {
+    const big = Object.assign(new Blob(["%PDF-"]), { name: "x.pdf" });
+    Object.defineProperty(big, "size", { value: LIMITS.maxFileBytes + 1 });
+    expect((await codeOf(renderPagesWith(big, undefined, fake(1)))).code).toBe("pdf/too-large");
+    const txt = new Blob(["texto"]);
+    expect((await codeOf(renderPagesWith(txt, undefined, fake(1)))).code).toBe("pdf/invalid");
+  });
+
+  it("limita páginas e informa o número", async () => {
+    const e = await codeOf(renderPagesWith(fixture("escaneado.pdf"), undefined, fake(31)));
+    expect(e.code).toBe("pdf/too-many-pages");
+    expect(e.detail).toBe("31");
+  });
+
+  it("limita o total das imagens", async () => {
+    const e = await codeOf(
+      renderPagesWith(fixture("escaneado.pdf"), undefined, fake(3, 8 * 1024 * 1024)),
+    );
+    expect(e.code).toBe("pdf/too-large");
+  });
+
+  it("falha de abertura vira pdf/invalid", async () => {
+    const open: OpenRenderer = async () => {
+      throw new Error("x");
+    };
+    expect((await codeOf(renderPagesWith(fixture("escaneado.pdf"), undefined, open))).code).toBe(
+      "pdf/invalid",
+    );
+  });
+
+  it("respeita o cancelamento no meio da renderização", async () => {
+    const ctrl = new AbortController();
+    let closed = false;
+    const open: OpenRenderer = async () => ({
+      pageCount: 3,
+      renderJpeg: async (page) => {
+        if (page === 2) ctrl.abort();
+        return jpeg(5);
+      },
+      close: () => {
+        closed = true;
+      },
+    });
+    const e = await codeOf(
+      renderPagesWith(fixture("escaneado.pdf"), { signal: ctrl.signal }, open),
+    );
+    expect(e.code).toBe("llm/cancelled");
+    expect(closed).toBe(true);
+    ctrl.abort();
+    expect(
+      (await codeOf(pdf.renderPages(fixture("escaneado.pdf"), { signal: ctrl.signal }))).code,
+    ).toBe("llm/cancelled");
   });
 });

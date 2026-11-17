@@ -8,10 +8,10 @@
  * Fonte: developers.openai.com/api/docs/guides/structured-outputs.
  */
 import { AppError, type ModelInfo } from "../../core";
-import { asRecord, fetchJson, LlmHttpError } from "../http";
+import { asRecord, fetchJson, LlmHttpError, noVisionOr } from "../http";
 import { schemaFor } from "../jsonschema";
 import { isTextModel, sortModels } from "../models";
-import { schemaInstruction } from "../prompt";
+import { pageLabel, schemaInstruction } from "../prompt";
 import type { Adapter, Conn, GenerateRequest } from "./types";
 
 function headers(conn: Conn): Record<string, string> {
@@ -77,11 +77,34 @@ export const openaiAdapter: Adapter = {
   },
 
   async generate(req: GenerateRequest) {
+    try {
+      return await generateChat(req);
+    } catch (e) {
+      throw req.images?.length ? noVisionOr(e) : e;
+    }
+  },
+};
+
+function userContent(req: GenerateRequest, extra = ""): string | unknown[] {
+  const text = extra ? `${req.user}\n\n${extra}` : req.user;
+  const images = req.images ?? [];
+  if (!images.length) return text;
+  return [
+    { type: "text", text },
+    ...images.flatMap((img) => [
+      { type: "text", text: pageLabel(img.page) },
+      { type: "image_url", image_url: { url: `data:${img.mime};base64,${img.base64}` } },
+    ]),
+  ];
+}
+
+async function generateChat(req: GenerateRequest): Promise<string> {
+  {
     const base = {
       model: req.model,
       messages: [
         { role: "system", content: req.system },
-        { role: "user", content: req.user },
+        { role: "user", content: userContent(req) },
       ],
     };
     try {
@@ -99,9 +122,9 @@ export const openaiAdapter: Adapter = {
       model: req.model,
       messages: [
         { role: "system", content: req.system },
-        { role: "user", content: `${req.user}\n\n${schemaInstruction(req.schemaText)}` },
+        { role: "user", content: userContent(req, schemaInstruction(req.schemaText)) },
       ],
       response_format: { type: "json_object" },
     });
-  },
-};
+  }
+}

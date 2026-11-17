@@ -80,6 +80,17 @@ export interface GroundingResult {
   verified: { flashcards: boolean[]; questions: boolean[] };
 }
 
+/** Sem texto para conferir (PDF escaneado): todos os itens ficam não verificados. */
+export function unverified(content: GeneratedContent): GroundingResult {
+  return {
+    content,
+    verified: {
+      flashcards: content.flashcards.map(() => false),
+      questions: content.questions.map(() => false),
+    },
+  };
+}
+
 /** Confere todos os trechos; corrige `page` quando o trecho está em outra página. */
 export function verifyContent(content: GeneratedContent, doc: ExtractedDoc): GroundingResult {
   const pages = prepare(doc);

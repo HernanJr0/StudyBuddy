@@ -1,4 +1,4 @@
-import type { ModelInfo } from "../../core";
+import type { ModelInfo, PageImage } from "../../core";
 
 export interface Conn {
   /** Endereço base, sem barra final. */
@@ -13,6 +13,8 @@ export interface GenerateRequest extends Conn {
   user: string;
   /** Esquema completo em texto, para provedores sem esquema estrito. */
   schemaText: string;
+  /** Páginas como imagem (PDF escaneado). Ausente no fluxo de texto. */
+  images?: PageImage[] | undefined;
 }
 
 export interface Adapter {

@@ -13,6 +13,8 @@ export interface HttpHints {
   responseFormat: boolean;
   /** O provedor reclamou de max_tokens. */
   maxTokens: boolean;
+  /** O provedor reclamou de imagem / visão / multimodal (só vale se a chamada levou imagens). */
+  vision: boolean;
 }
 
 export class LlmHttpError extends AppError {
@@ -52,6 +54,9 @@ function classify(status: number, raw: string): LlmHttpError {
   const hints: HttpHints = {
     responseFormat: /response_format|json_schema|json schema|structured|schema/.test(body),
     maxTokens: /max_tokens|max_completion_tokens/.test(body),
+    vision:
+      /image|vision|multimodal|multi-modal|modalit|(does not|doesn't|not) support/.test(body) &&
+      !/exceeds|too large|too long|maximum size|max size/.test(body),
   };
   const detail = String(status);
   const make = (code: ConstructorParameters<typeof AppError>[0]) =>
@@ -123,6 +128,22 @@ export async function fetchJson(
     clearTimeout(timer);
     signal?.removeEventListener("abort", onAbort);
   }
+}
+
+/**
+ * Em chamadas com imagens, uma recusa que cita imagem/visão (400, 404 ou 422)
+ * significa que o modelo não entende imagens. Devolve o erro a lançar.
+ */
+export function noVisionOr(e: unknown): unknown {
+  if (
+    e instanceof LlmHttpError &&
+    (e.status === 400 || e.status === 404 || e.status === 422) &&
+    e.hints.vision &&
+    e.code !== "llm/invalid-key"
+  ) {
+    return new AppError("llm/no-vision", String(e.status));
+  }
+  return e;
 }
 
 /** Utilitário: objeto desconhecido -> registro, ou vazio. */

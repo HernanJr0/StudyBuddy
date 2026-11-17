@@ -2,7 +2,7 @@
  * Módulo pdf: extrai texto de PDFs no navegador (unpdf, carregado sob demanda)
  * e trata texto colado como material.
  */
-import { AppError, type ExtractedDoc, LIMITS, type PdfModule } from "../core";
+import { AppError, type ExtractedDoc, LIMITS, type PageImage, type PdfModule } from "../core";
 
 const PAGE_TARGET = 1800;
 const MIN_TEXT = 200;
@@ -69,6 +69,103 @@ function chunk(text: string, size: number): string[] {
   return pages;
 }
 
+/* ---------- PDF escaneado: páginas como imagem ---------- */
+
+/** Largura máxima da imagem de cada página, em pixels. */
+export const IMAGE_MAX_WIDTH = 1280;
+export const IMAGE_QUALITY = 0.7;
+/** Teto do total das imagens, medido em caracteres de base64 (~15 MB). */
+export const MAX_IMAGES_BASE64 = 15 * 1024 * 1024;
+
+/** Renderizador de páginas. Injetável para teste; o real usa unpdf + canvas do navegador. */
+export interface PageRenderer {
+  pageCount: number;
+  /** Página (a partir de 1) em JPEG. */
+  renderJpeg(page: number): Promise<Uint8Array>;
+  close(): Promise<void> | void;
+}
+export type OpenRenderer = (data: Uint8Array) => Promise<PageRenderer>;
+
+export function bytesToBase64(bytes: Uint8Array): string {
+  let bin = "";
+  const step = 0x8000;
+  for (let i = 0; i < bytes.length; i += step) {
+    bin += String.fromCharCode(...bytes.subarray(i, i + step));
+  }
+  return btoa(bin);
+}
+
+/** Renderizador real: exige canvas (navegador). Carrega o leitor sob demanda. */
+const openUnpdfRenderer: OpenRenderer = async (data) => {
+  const { getDocumentProxy, renderPageAsImage } = await import("unpdf");
+  const doc = await getDocumentProxy(data);
+  return {
+    pageCount: doc.numPages,
+    renderJpeg: (page) =>
+      renderPageAsImage(doc, page, {
+        width: IMAGE_MAX_WIDTH,
+        format: "jpeg",
+        quality: IMAGE_QUALITY,
+      }),
+    close: () => doc.loadingTask.destroy(),
+  };
+};
+
+export async function renderPagesWith(
+  file: Blob & { name?: string },
+  options: { signal?: AbortSignal } | undefined,
+  open: OpenRenderer,
+): Promise<ExtractedDoc> {
+  const signal = options?.signal;
+  checkAborted(signal);
+  if (file.size > LIMITS.maxFileBytes) throw new AppError("pdf/too-large");
+  if (!(await startsWithPdfMagic(file))) throw new AppError("pdf/invalid");
+  checkAborted(signal);
+  const data = new Uint8Array(await file.arrayBuffer());
+  checkAborted(signal);
+
+  let renderer: PageRenderer;
+  try {
+    renderer = await open(data);
+  } catch (e) {
+    if (e instanceof AppError) throw e;
+    checkAborted(signal);
+    throw new AppError("pdf/invalid", undefined, { cause: e });
+  }
+  try {
+    if (renderer.pageCount > LIMITS.maxPages) {
+      throw new AppError("pdf/too-many-pages", String(renderer.pageCount));
+    }
+    if (renderer.pageCount < 1) throw new AppError("pdf/invalid");
+    const images: PageImage[] = [];
+    let total = 0;
+    for (let page = 1; page <= renderer.pageCount; page++) {
+      checkAborted(signal);
+      let bytes: Uint8Array;
+      try {
+        bytes = await renderer.renderJpeg(page);
+      } catch (e) {
+        checkAborted(signal);
+        throw new AppError("pdf/invalid", "render", { cause: e });
+      }
+      checkAborted(signal);
+      const base64 = bytesToBase64(bytes);
+      total += base64.length;
+      if (total > MAX_IMAGES_BASE64) throw new AppError("pdf/too-large", "imagens");
+      images.push({ page, mime: "image/jpeg", base64 });
+    }
+    return {
+      pages: images.map((i) => ({ page: i.page, text: "" })),
+      pageCount: images.length,
+      charCount: 0,
+      images,
+      ...(file.name ? { fileName: file.name } : {}),
+    };
+  } finally {
+    await Promise.resolve(renderer.close()).catch(() => undefined);
+  }
+}
+
 export const pdf: PdfModule = {
   async extractPdf(file, options) {
     const signal = options?.signal;
@@ -111,9 +208,8 @@ export const pdf: PdfModule = {
     };
   },
 
-  // PROVISÓRIO (frente I2 implementa com renderização por página):
-  async renderPages() {
-    throw new AppError("pdf/no-text");
+  renderPages(file, options) {
+    return renderPagesWith(file, options, openUnpdfRenderer);
   },
 
   fromText(text): ExtractedDoc {
