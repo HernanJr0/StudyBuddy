@@ -152,6 +152,12 @@ export const t = defineMessages({
     "As chaves salvas neste aparelho serão apagadas. Você poderá informar uma chave de novo quando quiser.",
   setDeleteKeyConfirm: "Apagar chave",
   setDeleteKeyDone: "Chave apagada deste aparelho.",
+  setOrConnect: "Conectar com OpenRouter",
+  setOrConnectHint:
+    "Você faz login no OpenRouter e a chave volta sozinha para este aparelho, sem copiar e colar.",
+  setOrConnecting: "Conectando ao OpenRouter…",
+  setOrOk: "Conectado ao OpenRouter. Agora escolha um modelo.",
+  setOrError: "Não foi possível conectar ao OpenRouter. Tente de novo ou cole uma chave.",
   setAppearanceTitle: "Aparência",
   setThemeLabel: "Tema",
   setThemeSystem: "Do aparelho",

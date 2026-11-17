@@ -2,6 +2,7 @@
  * Casca da aplicação: layout, rotas (hash) e páginas. As telas de estudo
  * (PackScreen) vêm de ui/study; o restante fica em ui/shell.
  */
+import { useEffect } from "preact/hooks";
 import { Showcase } from "../kit/Showcase";
 import { ReviewPage } from "../review";
 import { PackScreen } from "../study";
@@ -9,6 +10,7 @@ import { HistoryPage } from "./HistoryPage";
 import { HomePage } from "./HomePage";
 import { Layout } from "./Layout";
 import { ExamplePage, OpenLinkPage } from "./OpenLinkPage";
+import { handleOAuthReturn } from "./openrouterAuth";
 import { type Route, useRoute } from "./router";
 import { SettingsPage } from "./SettingsPage";
 import { AboutPage, GuidePage, NotFoundPage, PrivacyPage } from "./TextPages";
@@ -44,6 +46,9 @@ function Page({ route }: { route: Route }) {
 
 export function App() {
   const route = useRoute();
+  useEffect(() => {
+    void handleOAuthReturn();
+  }, []);
   return (
     <Layout route={route}>
       <Page route={route} />

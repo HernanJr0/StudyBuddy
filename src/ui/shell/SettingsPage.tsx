@@ -14,6 +14,12 @@ import { AppearanceSection } from "./AppearanceSection";
 import { DataSection } from "./DataSection";
 import { ExternalLink } from "./ExternalLink";
 import { t } from "./messages";
+import {
+  oauthWorking,
+  startOpenRouterConnect,
+  subscribeOAuth,
+  takeOAuthResult,
+} from "./openrouterAuth";
 
 interface Feedback {
   tone: Tone;
@@ -48,10 +54,56 @@ export function SettingsPage() {
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [busy, setBusy] = useState<"models" | "test" | null>(null);
   const [confirmKey, setConfirmKey] = useState(false);
+  const [connecting, setConnecting] = useState(oauthWorking());
   const rootRef = useRef<HTMLDivElement>(null);
   const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => () => abortRef.current?.abort(), []);
+
+  /** Retorno do OpenRouter: mostra o resultado e já sugere os modelos. */
+  useEffect(() => {
+    async function suggestModels(key: string) {
+      abortRef.current?.abort();
+      const controller = new AbortController();
+      abortRef.current = controller;
+      setBusy("models");
+      try {
+        const list = await llm.listModels(
+          { provider: "openrouter", apiKey: key },
+          { signal: controller.signal },
+        );
+        if (controller.signal.aborted) return;
+        setModels(list);
+        setModel(list[0]?.id ?? "");
+      } catch {
+        // A lista é só uma sugestão: o botão "Buscar modelos" continua disponível.
+      } finally {
+        if (!controller.signal.aborted) setBusy(null);
+      }
+    }
+    function check() {
+      setConnecting(oauthWorking());
+      const result = takeOAuthResult();
+      if (!result) return;
+      if (result.kind === "error") {
+        setFeedback({ tone: "bad", text: t("setOrError") });
+        return;
+      }
+      const saved = store.getSettings();
+      const key = store.getApiKey("openrouter");
+      setProvider("openrouter");
+      setApiKey(key);
+      setShowKey(false);
+      setRemember(true);
+      setErrors({});
+      setModel(saved.model);
+      setModels([]);
+      setFeedback({ tone: "ok", text: t("setOrOk") });
+      if (!saved.model.trim()) void suggestModels(key);
+    }
+    check();
+    return subscribeOAuth(check);
+  }, []);
 
   const info = getProvider(provider);
   const keyOptional = info.keyOptional === true;
@@ -201,6 +253,25 @@ export function SettingsPage() {
           )}
 
           <Notice tone="info">{t("setKeyRule")}</Notice>
+
+          {provider === "openrouter" && (
+            <div class="flex flex-col gap-2">
+              <div>
+                <Button
+                  variant="primary"
+                  disabled={connecting}
+                  onClick={() => {
+                    void startOpenRouterConnect().catch(() =>
+                      setFeedback({ tone: "bad", text: t("setOrError") }),
+                    );
+                  }}
+                >
+                  {connecting ? t("setOrConnecting") : t("setOrConnect")}
+                </Button>
+              </div>
+              <p class="text-sm text-muted">{t("setOrConnectHint")}</p>
+            </div>
+          )}
 
           {provider === "custom" && (
             <TextInput
