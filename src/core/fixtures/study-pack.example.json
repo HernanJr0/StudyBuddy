@@ -1,0 +1,157 @@
+{
+  "format": "studybuddy.pack",
+  "version": 1,
+  "id": "exemplo-fotossintese",
+  "createdAt": "2026-11-16T12:00:00.000Z",
+  "language": "pt-BR",
+  "source": {
+    "provider": "exemplo",
+    "model": "fixture",
+    "pageCount": 4,
+    "fileName": "fotossintese.pdf"
+  },
+  "title": "Fotossíntese",
+  "summary": {
+    "overview": "A fotossíntese transforma energia luminosa em energia química: usa gás carbônico e água para produzir glicose e liberar oxigênio. Ocorre nos cloroplastos, em duas etapas ligadas entre si, e sua velocidade depende de luz, gás carbônico e temperatura.",
+    "keyPoints": [
+      {
+        "text": "Plantas, algas e algumas bactérias fazem fotossíntese, produzindo glicose e oxigênio a partir de gás carbônico, água e luz.",
+        "page": 1
+      },
+      {
+        "text": "O processo acontece nos cloroplastos; a clorofila dos tilacoides absorve luz azul e vermelha e reflete a verde.",
+        "page": 2
+      },
+      {
+        "text": "A fase clara quebra a água, libera oxigênio e produz ATP e NADPH; o ciclo de Calvin usa esses produtos para fixar gás carbônico em glicose.",
+        "page": 3
+      },
+      {
+        "text": "Luz, concentração de gás carbônico e temperatura controlam a taxa; acima do ponto de saturação luminosa, mais luz não ajuda.",
+        "page": 4
+      }
+    ]
+  },
+  "flashcards": [
+    {
+      "id": "f1",
+      "front": "O que a fotossíntese transforma em quê?",
+      "back": "Energia luminosa em energia química.",
+      "page": 1,
+      "quote": "transformam energia luminosa em energia química",
+      "verified": true
+    },
+    {
+      "id": "f2",
+      "front": "Quais são os reagentes e os produtos da fotossíntese?",
+      "back": "Reagentes: gás carbônico e água. Produtos: glicose e oxigênio.",
+      "page": 1,
+      "quote": "usa gás carbônico e água para produzir glicose e liberar oxigênio",
+      "verified": true
+    },
+    {
+      "id": "f3",
+      "front": "Em qual organela das plantas ocorre a fotossíntese?",
+      "back": "Nos cloroplastos.",
+      "page": 2,
+      "quote": "a fotossíntese acontece nos cloroplastos",
+      "verified": true
+    },
+    {
+      "id": "f4",
+      "front": "Por que as folhas são verdes?",
+      "back": "Porque a clorofila absorve luz azul e vermelha e reflete a luz verde.",
+      "page": 2,
+      "quote": "reflete a luz verde, o que explica a cor das folhas",
+      "verified": true
+    },
+    {
+      "id": "f5",
+      "front": "O que a fase clara produz?",
+      "back": "Oxigênio, ATP e NADPH.",
+      "page": 3,
+      "quote": "liberando oxigênio e produzindo ATP e NADPH",
+      "verified": true
+    },
+    {
+      "id": "f6",
+      "front": "O que é o ponto de saturação luminosa?",
+      "back": "A intensidade de luz a partir da qual mais luz não aumenta a taxa de fotossíntese.",
+      "page": 4,
+      "quote": "depois disso, mais luz não aumenta a taxa",
+      "verified": true
+    }
+  ],
+  "questions": [
+    {
+      "id": "q1",
+      "stem": "Qual gás é liberado pelas plantas durante a fotossíntese?",
+      "options": ["Gás carbônico", "Oxigênio", "Nitrogênio", "Hidrogênio"],
+      "correctIndex": 1,
+      "explanation": "A fotossíntese consome gás carbônico e água e libera oxigênio, que vem da quebra das moléculas de água.",
+      "page": 1,
+      "quote": "produzir glicose e liberar oxigênio",
+      "level": "lembrar",
+      "verified": true
+    },
+    {
+      "id": "q2",
+      "stem": "Uma folha iluminada apenas com luz verde faria pouca fotossíntese. Por quê?",
+      "options": [
+        "A luz verde destrói a clorofila",
+        "A luz verde tem energia demais para os tilacoides",
+        "A clorofila reflete a maior parte da luz verde em vez de absorvê-la",
+        "A luz verde impede a entrada de gás carbônico na folha"
+      ],
+      "correctIndex": 2,
+      "explanation": "A clorofila absorve principalmente luz azul e vermelha. A luz verde é refletida, então pouca energia fica disponível para o processo.",
+      "page": 2,
+      "quote": "A clorofila absorve principalmente luz azul e vermelha e reflete a luz verde",
+      "level": "aplicar",
+      "verified": true
+    },
+    {
+      "id": "q3",
+      "stem": "Onde ocorre o ciclo de Calvin?",
+      "options": ["Nos tilacoides", "No estroma", "No núcleo da célula", "Na parede celular"],
+      "correctIndex": 1,
+      "explanation": "A fase clara ocorre nos tilacoides; o ciclo de Calvin ocorre no estroma do cloroplasto.",
+      "page": 3,
+      "quote": "No ciclo de Calvin, que ocorre no estroma",
+      "level": "lembrar",
+      "verified": true
+    },
+    {
+      "id": "q4",
+      "stem": "Se a fase clara for interrompida, o que acontece com o ciclo de Calvin?",
+      "options": [
+        "Continua normalmente, pois não usa luz",
+        "Acelera, pois sobra gás carbônico",
+        "Para depois de pouco tempo, por falta de ATP e NADPH",
+        "Passa a produzir oxigênio no lugar da fase clara"
+      ],
+      "correctIndex": 2,
+      "explanation": "O ciclo de Calvin não usa luz diretamente, mas depende do ATP e do NADPH produzidos na fase clara. Sem eles, a fixação de gás carbônico para.",
+      "page": 3,
+      "quote": "O ciclo de Calvin não usa luz diretamente, mas depende dos produtos da fase clara",
+      "level": "compreender",
+      "verified": true
+    },
+    {
+      "id": "q5",
+      "stem": "Por que temperaturas muito altas reduzem a taxa de fotossíntese?",
+      "options": [
+        "Porque desnaturam as enzimas envolvidas",
+        "Porque a clorofila passa a refletir luz vermelha",
+        "Porque a água deixa de ser absorvida pelas raízes",
+        "Porque o oxigênio deixa de ser liberado"
+      ],
+      "correctIndex": 0,
+      "explanation": "As reações da fotossíntese dependem de enzimas. Calor excessivo altera a forma dessas enzimas (desnaturação) e elas deixam de funcionar.",
+      "page": 4,
+      "quote": "Temperaturas muito altas reduzem a fotossíntese porque desnaturam as enzimas envolvidas",
+      "level": "compreender",
+      "verified": true
+    }
+  ]
+}

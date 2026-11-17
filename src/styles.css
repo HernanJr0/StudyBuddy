@@ -1,0 +1,131 @@
+@import "tailwindcss";
+
+/*
+ * Tokens de cor. Todos os pares texto/fundo abaixo têm contraste de pelo
+ * menos 4,5:1 (WCAG 2.2 AA); bordas e foco, pelo menos 3:1.
+ * Ao mudar um valor, confira o contraste de novo.
+ */
+:root {
+  color-scheme: light;
+  --sb-bg: #ffffff;
+  --sb-surface: #f3f5f8;
+  --sb-fg: #14181f;
+  --sb-muted: #4a5361;
+  --sb-primary: #1d4ed8;
+  --sb-on-primary: #ffffff;
+  --sb-ok: #166534;
+  --sb-ok-bg: #dcfce7;
+  --sb-bad: #b91c1c;
+  --sb-bad-bg: #fee2e2;
+  --sb-warn: #713f12;
+  --sb-warn-bg: #fef3c7;
+  --sb-line: #6b7280;
+  --sb-font-scale: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --sb-bg: #0f1218;
+    --sb-surface: #1a202b;
+    --sb-fg: #f1f5f9;
+    --sb-muted: #b4bfce;
+    --sb-primary: #93c5fd;
+    --sb-on-primary: #0b1220;
+    --sb-ok: #86efac;
+    --sb-ok-bg: #0f2e1c;
+    --sb-bad: #fca5a5;
+    --sb-bad-bg: #3b1414;
+    --sb-warn: #fde68a;
+    --sb-warn-bg: #3a2c07;
+    --sb-line: #8b95a5;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --sb-bg: #0f1218;
+  --sb-surface: #1a202b;
+  --sb-fg: #f1f5f9;
+  --sb-muted: #b4bfce;
+  --sb-primary: #93c5fd;
+  --sb-on-primary: #0b1220;
+  --sb-ok: #86efac;
+  --sb-ok-bg: #0f2e1c;
+  --sb-bad: #fca5a5;
+  --sb-bad-bg: #3b1414;
+  --sb-warn: #fde68a;
+  --sb-warn-bg: #3a2c07;
+  --sb-line: #8b95a5;
+}
+
+@theme inline {
+  --color-bg: var(--sb-bg);
+  --color-surface: var(--sb-surface);
+  --color-fg: var(--sb-fg);
+  --color-muted: var(--sb-muted);
+  --color-primary: var(--sb-primary);
+  --color-on-primary: var(--sb-on-primary);
+  --color-ok: var(--sb-ok);
+  --color-ok-bg: var(--sb-ok-bg);
+  --color-bad: var(--sb-bad);
+  --color-bad-bg: var(--sb-bad-bg);
+  --color-warn: var(--sb-warn);
+  --color-warn-bg: var(--sb-warn-bg);
+  --color-line: var(--sb-line);
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+}
+
+@layer base {
+  html {
+    /* O usuário pode aumentar o texto nas configurações; tudo usa rem. */
+    font-size: calc(100% * var(--sb-font-scale));
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--sb-bg);
+    color: var(--sb-fg);
+    font-family: var(--font-sans);
+    line-height: 1.5;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--sb-primary);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  h1,
+  h2,
+  h3 {
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+
+  a {
+    color: var(--sb-primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@keyframes sb-indeterminate {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(350%);
+  }
+}
