@@ -345,10 +345,7 @@ test("histórico lista, abre e exclui pacotes", async ({ page }) => {
   await expect(page).toHaveURL(/#\/pacote\//);
   await open(page, "#/historico");
 
-  const item = page
-    .getByRole("main")
-    .getByRole("listitem")
-    .filter({ hasText: EXAMPLE_TITLE });
+  const item = page.getByRole("main").getByRole("listitem").filter({ hasText: EXAMPLE_TITLE });
   await expect(item).toBeVisible();
   await expect(item).toContainText("Recebido");
   await expect(item).toContainText(/\d+ cartões/);
@@ -389,9 +386,7 @@ test("rota desconhecida mostra a página não encontrada", async ({ page }) => {
   await expect(page).toHaveTitle("Página não encontrada · StudyBuddy");
   await page.getByRole("link", { name: "Ir para o início" }).click();
   await expect(page).toHaveURL(/#\/$/);
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    /Seu PDF de estudo vira resumo/,
-  );
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(/Seu PDF de estudo vira resumo/);
 });
 
 test("rodapé leva às páginas de texto", async ({ page }) => {
