@@ -1,5 +1,11 @@
 import { defineConfig, devices } from "@playwright/test";
 
+// PW_PORT e PW_DEV permitem rodar várias instâncias ao mesmo tempo (frentes em paralelo).
+const port = Number(process.env.PW_PORT ?? 4173);
+const command = process.env.PW_DEV
+  ? `npx vite --port ${port} --strictPort`
+  : `npm run build && npm run preview -- --port ${port} --strictPort`;
+
 export default defineConfig({
   testDir: "tests/e2e",
   fullyParallel: true,
@@ -7,7 +13,7 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? "github" : "list",
   use: {
-    baseURL: "http://localhost:4173",
+    baseURL: `http://localhost:${port}`,
     locale: "pt-BR",
   },
   projects: [
@@ -15,8 +21,8 @@ export default defineConfig({
     { name: "desktop", use: { ...devices["Desktop Chrome"] } },
   ],
   webServer: {
-    command: "npm run build && npm run preview -- --port 4173 --strictPort",
-    url: "http://localhost:4173",
+    command,
+    url: `http://localhost:${port}`,
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
   },

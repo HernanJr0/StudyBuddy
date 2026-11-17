@@ -15,7 +15,6 @@ import {
   type StudyPack,
   StudyPackSchema,
 } from "../core";
-import { examplePack } from "../core/fixtures";
 
 interface Row {
   pack: StudyPack;
@@ -23,9 +22,7 @@ interface Row {
   savedAt: string;
 }
 
-const packs = new Map<string, Row>([
-  [examplePack.id, { pack: examplePack, origin: "imported", savedAt: examplePack.createdAt }],
-]);
+const packs = new Map<string, Row>();
 const attempts: Attempt[] = [];
 const marks: CardMark[] = [];
 const keys = new Map<ProviderId, string>();
@@ -71,6 +68,10 @@ export const store: StoreModule = {
   },
   async savePack(pack, origin) {
     packs.set(pack.id, { pack, origin, savedAt: new Date().toISOString() });
+  },
+  async updatePack(pack) {
+    const row = packs.get(pack.id);
+    if (row) packs.set(pack.id, { ...row, pack });
   },
   async deletePack(id) {
     packs.delete(id);

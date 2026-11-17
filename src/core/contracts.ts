@@ -118,6 +118,8 @@ export interface StoreModule {
   getPack(id: string): Promise<StudyPack | undefined>;
   /** Salva ou substitui. Um pacote importado com id já existente substitui o anterior. */
   savePack(pack: StudyPack, origin: PackOrigin): Promise<void>;
+  /** Grava alterações de curadoria em um pacote já salvo, mantendo origem e data. */
+  updatePack(pack: StudyPack): Promise<void>;
   deletePack(id: string): Promise<void>;
   /** Apaga pacotes, tentativas e marcações. Não apaga configurações nem a chave. */
   clearAll(): Promise<void>;
@@ -151,12 +153,17 @@ export interface StoreModule {
 
 /* ---------- rotas (hash) ---------- */
 
+export type PackTab = "resumo" | "flashcards" | "quiz";
+
 export const ROUTES = {
   home: "#/",
+  /** Salva o pacote de exemplo no aparelho e abre: permite experimentar sem chave. */
+  example: "#/exemplo",
+  /** Demonstração dos componentes base (uso interno e testes). */
+  kit: "#/kit",
   settings: "#/configuracoes",
   history: "#/historico",
-  pack: (id: string, tab?: "resumo" | "flashcards" | "quiz") =>
-    `#/pacote/${encodeURIComponent(id)}${tab ? `/${tab}` : ""}`,
+  pack: (id: string, tab?: PackTab) => `#/pacote/${encodeURIComponent(id)}${tab ? `/${tab}` : ""}`,
   open: (payload: string) => `#/abrir/${payload}`,
   aiGuide: "#/uso-responsavel",
   privacy: "#/privacidade",
