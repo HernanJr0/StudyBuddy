@@ -12,7 +12,11 @@ Projeto de extensão do curso de Ciência da Computação da Uninorte (Manaus, A
 - **Chave própria.** A geração usa a chave de API do usuário, no provedor que ele escolher: Google Gemini, OpenRouter, Groq, OpenAI, Anthropic ou qualquer endereço compatível com OpenAI (inclusive modelo local). O texto vai do navegador direto para esse provedor.
 - **Compartilhável.** Um pacote vira arquivo `.studybuddy.json` ou link autocontido. Quem recebe estuda sem chave.
 - **Confiável.** Cada cartão e questão traz um trecho do material, conferido automaticamente na página indicada. Itens podem ser editados ou excluídos.
-- **Acessível e leve.** WCAG 2.2 AA (base da ABNT NBR 17225), funciona em 320 px, 64 KB de JavaScript na primeira carga.
+- **Revisão espaçada.** Os flashcards avaliados entram em "Revisar hoje", agendados pelo algoritmo FSRS.
+- **Funciona offline.** Instalável no celular; pacotes salvos abrem sem internet (gerar exige rede).
+- **PDF escaneado.** Sem texto selecionável, as páginas podem ir como imagem para um modelo com visão.
+- **OpenRouter em um clique.** Login no OpenRouter devolve a chave para o aparelho, sem copiar e colar.
+- **Acessível e leve.** WCAG 2.2 AA (base da ABNT NBR 17225), funciona em 320 px, 64 KB de JavaScript na primeira carga; páginas e leitor de PDF carregam sob demanda.
 
 ## Rodar localmente
 
@@ -44,6 +48,8 @@ src/llm/       adaptadores dos provedores, prompt, validação, verificação de
 src/store/     IndexedDB, configurações, arquivo e link, exportação para o Anki
 src/ui/kit/    componentes base acessíveis (demonstração em #/kit)
 src/ui/study/  resumo, flashcards, quiz e edição
+src/ui/review/ revisão espaçada (FSRS)
+src/pwa/       registro do service worker (gerado no build por scripts/pwa-plugin.ts)
 src/ui/shell/  layout, rotas, geração, configurações, histórico, páginas de texto
 tests/e2e/     testes no navegador
 ```

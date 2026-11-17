@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "preact/hooks";
 import { type PackSummary, ROUTES } from "../../core";
 import { store } from "../../store";
 import { announce, Button, cx, Dialog, Icon } from "../kit";
+import { useDueCount } from "../review/useDueCount";
 import { t } from "./messages";
 
 type Filter = "all" | "generated" | "imported";
@@ -127,6 +128,7 @@ export function Sidebar({ activePackId }: { activePackId?: string }) {
         {collapsed ? (
           <div class="flex flex-col items-center gap-3 py-3">
             <ButtonLinkCreate collapsed />
+            <ReviewLink collapsed />
             <span class="rounded-full bg-bg px-2 py-0.5 text-xs text-muted">{count}</span>
           </div>
         ) : (
@@ -147,6 +149,7 @@ export function Sidebar({ activePackId }: { activePackId?: string }) {
                 />
               </label>
               <ButtonLinkCreate />
+              <ReviewLink />
               <fieldset
                 aria-label={t("sideFilterGroup")}
                 class="m-0 flex min-w-0 gap-1.5 border-0 p-0"
@@ -255,6 +258,40 @@ function FilterChip({
     >
       {children}
     </button>
+  );
+}
+
+function ReviewLink({ collapsed }: { collapsed?: boolean }) {
+  const due = useDueCount();
+  const label = due === 1 ? t("sideReview1") : t("sideReview", { n: due });
+  return (
+    <a
+      href={ROUTES.review}
+      aria-label={collapsed ? label : undefined}
+      class={cx(
+        "inline-flex min-h-11 items-center gap-2 rounded-lg border-2 border-line bg-bg font-semibold text-fg no-underline hover:bg-surface",
+        collapsed ? "w-11 justify-center" : "w-full justify-between px-2.5 text-sm",
+      )}
+    >
+      {collapsed ? (
+        <span aria-hidden="true" class="text-sm">
+          {due}
+        </span>
+      ) : (
+        <>
+          <span>{t("sideReviewTitle")}</span>
+          <span
+            class={cx(
+              "rounded-full px-2 py-0.5 text-xs",
+              due > 0 ? "bg-accent-bg text-warn" : "bg-surface text-muted",
+            )}
+          >
+            <span class="sr-only">: </span>
+            {due === 1 ? t("sideReviewCount1") : t("sideReviewCount", { n: due })}
+          </span>
+        </>
+      )}
+    </a>
   );
 }
 

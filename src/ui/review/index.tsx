@@ -6,38 +6,8 @@ import { type DueItem, loadQueue } from "./queue";
 import { recordGrade } from "./record";
 import { GRADES, type GradeKey, previewIntervals } from "./scheduler";
 
-const CHANGED = "studybuddy:packs-changed";
 
-/** Quantidade de flashcards com revisão vencida (para a barra lateral). */
-export function useDueCount(): number {
-  const [count, setCount] = useState(0);
-  useEffect(() => {
-    let alive = true;
-    const refresh = () => {
-      loadQueue(new Date())
-        .then((q) => {
-          if (alive) setCount(q.due.length);
-        })
-        .catch(() => {});
-    };
-    const onVisible = () => {
-      if (document.visibilityState === "visible") refresh();
-    };
-    refresh();
-    window.addEventListener(CHANGED, refresh);
-    window.addEventListener("focus", refresh);
-    document.addEventListener("visibilitychange", onVisible);
-    const timer = setInterval(refresh, 60_000);
-    return () => {
-      alive = false;
-      window.removeEventListener(CHANGED, refresh);
-      window.removeEventListener("focus", refresh);
-      document.removeEventListener("visibilitychange", onVisible);
-      clearInterval(timer);
-    };
-  }, []);
-  return count;
-}
+export { useDueCount } from "./useDueCount";
 
 function formatWhen(date: Date): string {
   return date.toLocaleString("pt-BR", { dateStyle: "long", timeStyle: "short" });

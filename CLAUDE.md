@@ -15,7 +15,7 @@ Aplicação estática (Preact + Vite + Tailwind 4 + Zod 4), 100% no navegador. P
 - Use os componentes de `src/ui/kit` (veja `#/kit`). Todo campo usa `Field`/`TextInput`/`Select`/`TextArea`.
 - Cores só pelos tokens (`bg-bg`, `text-fg`, `text-muted`, `bg-primary`, `text-ok`, `text-bad`...). Alvos de toque de 44 px (`min-h-11`). Certo e errado nunca só por cor.
 - Mudanças de estado: `announce()` ou `Notice live`. Tudo operável por teclado. Layout a partir de 320 px.
-- O leitor de PDF e outras dependências pesadas entram por `import()` dinâmico. Orçamento: 80 KB de JS inicial (gzip).
+- O leitor de PDF e outras dependências pesadas entram por `import()` dinâmico; páginas fora do início usam `lazyPage` (`src/ui/shell/lazy.tsx`). Orçamento: 80 KB de JS inicial (gzip).
 
 ## Antes de entregar
 `npm run check` e, se mexeu em interface, `npm run test:e2e`. Testes unitários ficam ao lado do código (`*.test.ts`). Nenhuma chave real no repositório. Commits em Conventional Commits, sem rodapé de coautoria.

@@ -3,17 +3,23 @@
  * (PackScreen) vêm de ui/study; o restante fica em ui/shell.
  */
 import { useEffect } from "preact/hooks";
-import { Showcase } from "../kit/Showcase";
-import { ReviewPage } from "../review";
-import { PackScreen } from "../study";
 import { HistoryPage } from "./HistoryPage";
 import { HomePage } from "./HomePage";
 import { Layout } from "./Layout";
+import { lazyPage } from "./lazy";
 import { ExamplePage, OpenLinkPage } from "./OpenLinkPage";
 import { handleOAuthReturn } from "./openrouterAuth";
 import { type Route, useRoute } from "./router";
-import { SettingsPage } from "./SettingsPage";
-import { AboutPage, GuidePage, NotFoundPage, PrivacyPage } from "./TextPages";
+import { NotFoundPage } from "./TextPages";
+
+// Páginas fora do caminho inicial são carregadas sob demanda (orçamento de 80 KB).
+const PackScreen = lazyPage(() => import("../study").then((m) => m.PackScreen));
+const ReviewPage = lazyPage(() => import("../review").then((m) => m.ReviewPage));
+const SettingsPage = lazyPage(() => import("./SettingsPage").then((m) => m.SettingsPage));
+const Showcase = lazyPage(() => import("../kit/Showcase").then((m) => m.Showcase));
+const GuidePage = lazyPage(() => import("./TextPages").then((m) => m.GuidePage));
+const PrivacyPage = lazyPage(() => import("./TextPages").then((m) => m.PrivacyPage));
+const AboutPage = lazyPage(() => import("./TextPages").then((m) => m.AboutPage));
 
 function Page({ route }: { route: Route }) {
   switch (route.name) {
