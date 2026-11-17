@@ -60,6 +60,7 @@ test("o botão leva ao login do OpenRouter com PKCE", async ({ page }) => {
     await route.fulfill({ status: 200, contentType: "text/html", body: "<p>login</p>" });
   });
   await openSettings(page);
+  const appOrigin = new URL(page.url()).origin;
   await expect(page.getByText(/a chave volta sozinha/)).toBeVisible();
   await page.getByRole("button", { name: "Conectar com OpenRouter" }).click();
   await page.waitForURL(/openrouter\.ai\/auth/);
@@ -68,7 +69,8 @@ test("o botão leva ao login do OpenRouter com PKCE", async ({ page }) => {
   expect(url).not.toBeNull();
   const origin = new URL(page.url()).origin;
   expect(origin).toBe("https://openrouter.ai");
-  expect(url?.searchParams.get("callback_url")).toMatch(/^http:\/\/localhost:\d+\/$/);
+  // O retorno é a raiz do próprio site (local ou publicado).
+  expect(url?.searchParams.get("callback_url")).toBe(`${appOrigin}/`);
   expect(url?.searchParams.get("code_challenge_method")).toBe("S256");
   expect(url?.searchParams.get("code_challenge")).toMatch(/^[A-Za-z0-9_-]{43}$/);
 });

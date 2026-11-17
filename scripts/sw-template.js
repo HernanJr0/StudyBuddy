@@ -3,19 +3,30 @@
 // Não guarda chave nem texto de material: só arquivos estáticos do próprio site.
 const CACHE = "__CACHE__";
 const PRECACHE = __PRECACHE__;
-const SHELL = new URL("index.html", self.registration.scope).href;
+// A página inicial fica em cache pela raiz: servidores como o do Cloudflare
+// redirecionam /index.html para /, e resposta redirecionada não serve para navegação.
+const SHELL = new URL("./", self.registration.scope).href;
+const toUrl = (p) => new URL(p === "index.html" ? "./" : p, self.registration.scope).href;
+
+/** Copia a resposta sem a marca de redirecionamento, para poder ser usada em navegação. */
+async function clean(res) {
+  if (!res.redirected) return res;
+  return new Response(await res.blob(), { status: res.status, headers: res.headers });
+}
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches
-      .open(CACHE)
-      .then((cache) =>
-        cache.addAll(
-          PRECACHE.map(
-            (p) => new Request(new URL(p, self.registration.scope), { cache: "reload" }),
-          ),
-        ),
-      ),
+    (async () => {
+      const cache = await caches.open(CACHE);
+      await Promise.all(
+        PRECACHE.map(async (p) => {
+          const url = toUrl(p);
+          const res = await fetch(url, { cache: "reload" });
+          if (!res.ok) throw new Error(`pré-cache falhou: ${p}`);
+          await cache.put(url, await clean(res));
+        }),
+      );
+    })(),
   );
 });
 
